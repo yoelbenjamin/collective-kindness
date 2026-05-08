@@ -240,8 +240,12 @@
     width: 100%;
     height: auto;
     display: block;
-    /* transparent PNGs — no blend mode needed, just a soft drop-shadow for depth */
-    filter: drop-shadow(0 10px 22px rgba(49, 58, 68, 0.16));
+    /* Directional shadow: light from upper-left, shadow falls toward
+       lower-right. Layered — tight contact shadow + longer cast shadow —
+       so objects feel sitting on the page rather than floating off it. */
+    filter:
+      drop-shadow(2px 3px 4px rgba(49, 58, 68, 0.10))
+      drop-shadow(10px 18px 28px rgba(49, 58, 68, 0.18));
   }
   /* placeholder styling — visible while real assets are missing */
   .hero-object--placeholder {
