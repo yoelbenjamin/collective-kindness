@@ -61,7 +61,7 @@
 
   html { scroll-behavior: smooth; }
 
-  /* ─── SCROLL-FOCUS (TrumpRX-style focus-in on scroll) ─ */
+  /* ─── SCROLL-FOCUS (blur + fade-in once on viewport entry) ─ */
   .scroll-focus {
     opacity: 0;
     filter: blur(4px);
@@ -76,6 +76,24 @@
     filter: blur(0);
     transform: translateY(0);
   }
+
+  /* ─── SCROLL-DARKEN (word-by-word color reveal on scroll) ─ */
+  .scroll-darken {
+    color: var(--ink-soft);
+  }
+  .scroll-darken .word {
+    transition: color 0.35s ease-out;
+  }
+  .scroll-darken .word.is-active {
+    color: var(--ink);
+  }
+  /* em-blue words stay blue regardless of scroll position */
+  .scroll-darken .em-blue,
+  .scroll-darken .em-blue .word,
+  .scroll-darken .em-blue .word.is-active {
+    color: var(--emphasis);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .scroll-focus {
       opacity: 1;
@@ -83,6 +101,8 @@
       transform: none;
       transition: none;
     }
+    .scroll-darken { color: var(--ink); }
+    .scroll-darken .word { transition: none; }
   }
 
   body {
@@ -749,7 +769,7 @@
 <section class="mission" id="mission">
   <div class="wrap">
     <div class="mission-inner">
-      <p class="mission-statement scroll-focus">
+      <p class="mission-statement scroll-focus scroll-darken">
         Our mission is to help <em class="em-blue">all</em> Jewish people get back on their feet, toward emotional and financial stability. A <em class="em-blue">hand-up</em>, not a handout.
       </p>
     </div>
@@ -759,8 +779,8 @@
 <section class="problem" id="problem">
   <div class="wrap">
     <span class="label label-green">— The problem</span>
-    <p class="problem-statement scroll-focus">
-      The chesed system was built for emergencies, not journeys.<span class="soft"> The families we serve are working full-time and still falling short by thousands of dollars a month. They don&rsquo;t need a check &mdash; they need a coach, a plan, and someone who&rsquo;ll still pick up the phone in November.</span> Nobody graduates from a handout.
+    <p class="problem-statement scroll-focus scroll-darken">
+      The chesed system was built for emergencies, not journeys. The families we serve are working full-time and still falling short by thousands of dollars a month. They don&rsquo;t need a check &mdash; they need a coach, a plan, and someone who&rsquo;ll still pick up the phone in November. Nobody graduates from a handout.
     </p>
   </div>
 </section>
@@ -1019,6 +1039,72 @@
       });
     }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
     targets.forEach(el => observer.observe(el));
+  })();
+
+  // Scroll-darken: word-by-word color reveal driven by scroll position.
+  // Each word starts ink-soft and becomes ink as the scroll line passes it.
+  // Apple-style progressive paragraph reveal.
+  (function() {
+    const targets = document.querySelectorAll('.scroll-darken');
+    if (!targets.length) return;
+
+    // Wrap every word in every text node in a <span class="word">,
+    // preserving any inline markup (em, strong, etc.).
+    function splitWords(el) {
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+      const textNodes = [];
+      while (walker.nextNode()) textNodes.push(walker.currentNode);
+      textNodes.forEach(textNode => {
+        if (!textNode.textContent.trim()) return;
+        const frag = document.createDocumentFragment();
+        textNode.textContent.split(/(\s+)/).forEach(part => {
+          if (!part) return;
+          if (/\s+/.test(part)) {
+            frag.appendChild(document.createTextNode(part));
+          } else {
+            const span = document.createElement('span');
+            span.className = 'word';
+            span.textContent = part;
+            frag.appendChild(span);
+          }
+        });
+        textNode.parentNode.replaceChild(frag, textNode);
+      });
+    }
+
+    const items = [];
+    targets.forEach(el => {
+      splitWords(el);
+      items.push({ el, words: el.querySelectorAll('.word') });
+    });
+
+    function update() {
+      const vh = window.innerHeight;
+      // Darkening zone: starts when element top hits 80% of viewport,
+      // completes when element top hits 25% of viewport.
+      const startLine = vh * 0.80;
+      const endLine = vh * 0.25;
+      items.forEach(({ el, words }) => {
+        const top = el.getBoundingClientRect().top;
+        const progress = Math.max(0, Math.min(1, (startLine - top) / (startLine - endLine)));
+        const activeCount = Math.ceil(progress * words.length);
+        words.forEach((w, i) => {
+          if (w.closest('.em-blue')) return; // emphasis words keep their color
+          w.classList.toggle('is-active', i < activeCount);
+        });
+      });
+    }
+
+    let pending = false;
+    function onScroll() {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(() => { update(); pending = false; });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
   })();
 </script>
 </body>
