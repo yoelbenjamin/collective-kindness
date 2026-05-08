@@ -61,6 +61,30 @@
 
   html { scroll-behavior: smooth; }
 
+  /* ─── SCROLL-FOCUS (TrumpRX-style focus-in on scroll) ─ */
+  .scroll-focus {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(12px);
+    transition: opacity 0.9s cubic-bezier(0.2, 0.65, 0.3, 1),
+                filter   0.9s cubic-bezier(0.2, 0.65, 0.3, 1),
+                transform 0.9s cubic-bezier(0.2, 0.65, 0.3, 1);
+    will-change: opacity, filter, transform;
+  }
+  .scroll-focus.is-visible {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-focus {
+      opacity: 1;
+      filter: none;
+      transform: none;
+      transition: none;
+    }
+  }
+
   body {
     background: var(--bg);
     color: var(--ink);
@@ -725,8 +749,8 @@
 <section class="mission" id="mission">
   <div class="wrap">
     <div class="mission-inner">
-      <p class="mission-statement">
-        Our mission is to help <em class="em-blue">all</em> Jewish people get back on their feet, toward emotional and financial stability.<br>A <em class="em-blue">hand-up</em>, not a handout.
+      <p class="mission-statement scroll-focus">
+        Our mission is to help <em class="em-blue">all</em> Jewish people get back on their feet, toward emotional and financial stability. A <em class="em-blue">hand-up</em>, not a handout.
       </p>
     </div>
   </div>
@@ -735,7 +759,7 @@
 <section class="problem" id="problem">
   <div class="wrap">
     <span class="label label-green">— The problem</span>
-    <p class="problem-statement">
+    <p class="problem-statement scroll-focus">
       The chesed system was built for emergencies, not journeys.<span class="soft"> The families we serve are working full-time and still falling short by thousands of dollars a month. They don&rsquo;t need a check &mdash; they need a coach, a plan, and someone who&rsquo;ll still pick up the phone in November.</span> Nobody graduates from a handout.
     </p>
   </div>
@@ -977,5 +1001,25 @@
   </div>
 </footer>
 
+<script>
+  // Scroll-focus: blur+fade-in once per element when it enters the viewport.
+  // Mirrors the TrumpRX pattern (opacity 0 + blur 4px + translateY 12px → resting state).
+  (function() {
+    const targets = document.querySelectorAll('.scroll-focus');
+    if (!('IntersectionObserver' in window) || !targets.length) {
+      targets.forEach(el => el.classList.add('is-visible'));
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+    targets.forEach(el => observer.observe(el));
+  })();
+</script>
 </body>
 </html>
