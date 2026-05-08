@@ -266,8 +266,8 @@
   .hero-widget .pill:hover { opacity: 0.55; }
   .hero-widget .pill .pill-text {
     display: inline-block;
-    transition: opacity 0.38s ease-out,
-                transform 0.46s cubic-bezier(0.32, 0.72, 0, 1);   /* Apple-ish, organic */
+    transition: opacity 0.22s ease-out,
+                transform 0.34s cubic-bezier(0.32, 0.72, 0, 1);   /* Apple-ish, organic */
   }
   .hero-widget .pill .pill-text.is-leaving {
     opacity: 0;
@@ -823,9 +823,8 @@
 
 <section class="problem" id="problem">
   <div class="wrap">
-    <span class="label label-green">The problem</span>
     <p class="problem-statement scroll-focus scroll-darken">
-      Most Jewish families in trouble don&rsquo;t look like it. Bills paid. Kids in school. Credit cards quietly growing. Help in the Jewish community wasn&rsquo;t built for this.
+      Most Jewish families in trouble don&rsquo;t look like it. The debt grows quietly. The gambling stays hidden. The community leader carries it alone. Help wasn&rsquo;t built for the things nobody talks about.
     </p>
   </div>
 </section>
@@ -1184,7 +1183,7 @@
         requestAnimationFrame(() => {
           requestAnimationFrame(() => textEl.classList.remove('is-entering'));
         });
-      }, 380);                                  /* matches CSS opacity duration */
+      }, 220);                                  /* matches CSS opacity duration */
     }
 
     function update(idx) {
