@@ -240,8 +240,9 @@
     width: 100%;
     height: auto;
     display: block;
-    /* mix-blend-multiply gracefully handles cream-bg images blending into our parchment */
-    mix-blend-mode: multiply;
+    /* mix-blend-darken picks the darker pixel between img and parchment —
+       eats the cream image bg, keeps the dark object pixels intact */
+    mix-blend-mode: darken;
     filter: drop-shadow(0 8px 18px rgba(49, 58, 68, 0.08));
   }
   /* placeholder styling — visible while real assets are missing */
@@ -332,8 +333,7 @@
     font-size: clamp(22px, 2.4vw, 34px);
     line-height: 1.5;
     color: var(--ink);
-    margin: 0 auto;                    /* centered */
-    max-width: 32ch;
+    margin: 0;                         /* let inline content center within centered .wrap */
   }
   .widget-pill {
     display: inline;
