@@ -281,8 +281,8 @@
   .hero-object--chip {
     width: 130px;
     height: 130px;
-    bottom: 18%;
-    right: 30%;
+    bottom: 28%;
+    right: 22%;
     z-index: 1;
     transform: rotate(8deg);
   }
@@ -342,8 +342,15 @@
     color: var(--ink);
     cursor: pointer;
     transition: opacity 0.2s ease;
-    display: inline;
+    display: inline-block;
+    text-align: center;
+    vertical-align: baseline;
   }
+  /* Fixed min-widths sized to the longest possible content per slot —
+     stops the surrounding "We help" / "with" / "." text from jumping
+     when pill content changes. */
+  .hero-widget .pill[data-pill="audience"] { min-width: 13ch; }
+  .hero-widget .pill[data-pill="issue"]    { min-width: 14ch; }
   .hero-widget .pill:hover { opacity: 0.55; }
   .hero-widget .pill .pill-text {
     display: inline-block;
