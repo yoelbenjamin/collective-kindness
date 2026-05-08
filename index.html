@@ -82,8 +82,8 @@
     color: var(--ink);
   }
   .scroll-darken .word {
-    opacity: 0.30;                                  /* faint at start */
-    transition: opacity 0.5s ease-out;
+    opacity: 0.18;                                  /* faint at start — more dramatic contrast */
+    transition: opacity 0.4s ease-out;
   }
   .scroll-darken .word.is-active {
     opacity: 1;
@@ -1081,10 +1081,10 @@
 
     function update() {
       const vh = window.innerHeight;
-      // Darkening zone: starts when element top hits 80% of viewport,
-      // completes when element top hits 25% of viewport.
-      const startLine = vh * 0.80;
-      const endLine = vh * 0.25;
+      // Darkening zone: starts when element top hits 95% of viewport (basically as it appears),
+      // completes when element top hits 45% of viewport (around upper-middle).
+      const startLine = vh * 0.95;
+      const endLine = vh * 0.45;
       items.forEach(({ el, words }) => {
         const top = el.getBoundingClientRect().top;
         const progress = Math.max(0, Math.min(1, (startLine - top) / (startLine - endLine)));
