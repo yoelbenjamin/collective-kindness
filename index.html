@@ -77,21 +77,22 @@
     transform: translateY(0);
   }
 
-  /* ─── SCROLL-DARKEN (word-by-word color reveal on scroll) ─ */
+  /* ─── SCROLL-DARKEN (word-by-word opacity reveal on scroll) ─ */
   .scroll-darken {
-    color: var(--ink-soft);
-  }
-  .scroll-darken .word {
-    transition: color 0.35s ease-out;
-  }
-  .scroll-darken .word.is-active {
     color: var(--ink);
   }
-  /* em-blue words stay blue regardless of scroll position */
+  .scroll-darken .word {
+    opacity: 0.30;                                  /* faint at start */
+    transition: opacity 0.5s ease-out;
+  }
+  .scroll-darken .word.is-active {
+    opacity: 1;
+  }
+  /* em-blue stays fully visible at brand emphasis throughout */
   .scroll-darken .em-blue,
-  .scroll-darken .em-blue .word,
-  .scroll-darken .em-blue .word.is-active {
+  .scroll-darken .em-blue .word {
     color: var(--emphasis);
+    opacity: 1;
   }
 
   @media (prefers-reduced-motion: reduce) {
