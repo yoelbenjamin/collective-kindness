@@ -240,10 +240,8 @@
     width: 100%;
     height: auto;
     display: block;
-    /* mix-blend-darken picks the darker pixel between img and parchment —
-       eats the cream image bg, keeps the dark object pixels intact */
-    mix-blend-mode: darken;
-    filter: drop-shadow(0 8px 18px rgba(49, 58, 68, 0.08));
+    /* transparent PNGs — no blend mode needed, just a soft drop-shadow for depth */
+    filter: drop-shadow(0 8px 18px rgba(49, 58, 68, 0.10));
   }
   /* placeholder styling — visible while real assets are missing */
   .hero-object--placeholder {
@@ -890,8 +888,8 @@
   <!-- HERO OBJECTS — replace inner div with <img src="..." alt=""> once real renders arrive -->
   <div class="hero-object hero-object--envelope hero-object--placeholder">Overdue<br>envelope</div>
   <div class="hero-object hero-object--statement hero-object--placeholder">Folded credit card<br>statement</div>
-  <div class="hero-object hero-object--chip"><img src="images/poker-chip.png" alt=""></div>
-  <div class="hero-object hero-object--dice hero-object--placeholder">Dice</div>
+  <div class="hero-object hero-object--chip"><img src="images/poker-chip-removebg-preview.png" alt=""></div>
+  <div class="hero-object hero-object--dice"><img src="images/dice-removebg-preview.png" alt=""></div>
 
   <div class="wrap">
     <h1 class="hero-headline scroll-focus">We exist so no one has to face the hardest moments <em class="em-blue">alone</em>.</h1>
