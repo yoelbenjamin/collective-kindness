@@ -338,7 +338,7 @@
     font-family: var(--serif);
     font-stretch: 75%;
     font-weight: 300;
-    font-size: clamp(48px, 6.4vw, 88px);
+    font-size: clamp(40px, 6.2vw, 84px);
     line-height: 1.04;
     letter-spacing: -0.018em;
     color: var(--ink);
@@ -351,7 +351,7 @@
     font-family: var(--serif);
     font-stretch: 75%;
     font-weight: 300;
-    font-size: clamp(22px, 2.4vw, 34px);
+    font-size: clamp(17px, 2.4vw, 34px);
     line-height: 1.5;
     color: var(--ink);
     margin: 0;                         /* let inline content center within centered .wrap */
@@ -479,7 +479,7 @@
     font-family: var(--serif);            /* Noto Serif — variable, condensed-capable */
     font-stretch: 75%;                    /* Noto Serif Condensed effect */
     font-weight: 300;                     /* Light — matches Gates */
-    font-size: 60px;
+    font-size: clamp(30px, 5.6vw, 60px);
     line-height: 1.12;
     letter-spacing: -0.015em;
     color: var(--ink);
@@ -567,7 +567,7 @@
     font-family: var(--serif);            /* matches .mission-statement */
     font-stretch: 75%;
     font-weight: 300;
-    font-size: 60px;
+    font-size: clamp(28px, 5.4vw, 60px);
     line-height: 1.12;
     letter-spacing: -0.015em;
     color: var(--ink);
@@ -1032,10 +1032,30 @@
     .program { grid-template-columns: 1fr; gap: 16px; padding: 28px 0; }
     .program-desc { padding-top: 0; }
     .program-cta { justify-self: start; margin-top: 0; }
+    /* On mobile the row-color-wash bleeding past gutters looks misaligned;
+       contain it to the row */
+    .program::before { inset: 0; }
     .donate-inner { grid-template-columns: 1fr; gap: 40px; }
     .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
     .footer-brand { grid-column: span 2; }
     .footer-base { flex-direction: column; align-items: flex-start; }
+    /* Olive branch: at narrow widths the wide SVG is mostly clipped below
+       the hero. Pull it up so it stays visible. */
+    .hero-olive { bottom: -40px; left: -40px; right: -20px; width: calc(100% + 60px); opacity: 0.10; }
+    /* Mission section gets more breathing room on mobile */
+    .mission { padding: clamp(70px, 14vh, 140px) 0; }
+    /* Tighten partner marquee */
+    .partners-track img { height: 26px; }
+    .partners-track { gap: 40px; }
+    /* Cap the slot widget rows so very long combos don't blow out */
+    .slot-row { max-width: 80vw; }
+  }
+  /* Tighter still for phones */
+  @media (max-width: 480px) {
+    .hero { padding: clamp(60px, 10vh, 120px) 0 clamp(40px, 8vh, 100px); }
+    .hero-olive { bottom: -30px; opacity: 0.09; }
+    .mission-cta { padding: 11px 20px 13px; font-size: 14px; }
+    .program-cta { padding: 9px 16px 11px; font-size: 12px; }
   }
 </style>
 </head>
@@ -1545,11 +1565,27 @@
       });
     }
 
+    // Scale transition duration to the magnitude of change so every swap
+    // reads at a consistent visual velocity. Without this, a 1-row jump
+    // covers far less ground in the fixed 600ms than a 6-row jump, and
+    // long jumps feel "faster" than short ones.
+    let prevA = 0, prevI = 0;
+    const PER_ROW_MS = 90;
+    const BASE_MS = 280;
     function paint(audIdx, issueIdx) {
+      const audDelta = Math.abs(audIdx - prevA);
+      const issDelta = Math.abs(issueIdx - prevI);
+      const audDur = audDelta === 0 ? 0 : BASE_MS + audDelta * PER_ROW_MS;
+      const issDur = issDelta === 0 ? 0 : BASE_MS + issDelta * PER_ROW_MS;
+      tracks[0].window.style.transitionDuration = audDur + 'ms';
+      tracks[0].track.style.transitionDuration  = audDur + 'ms';
+      tracks[1].window.style.transitionDuration = issDur + 'ms';
+      tracks[1].track.style.transitionDuration  = issDur + 'ms';
       tracks[0].window.style.width = tracks[0].widths[audIdx] + 'px';
       tracks[0].track.style.transform = 'translateY(' + (-audIdx * tracks[0].rowHeight) + 'px)';
       tracks[1].window.style.width = tracks[1].widths[issueIdx] + 'px';
       tracks[1].track.style.transform = 'translateY(' + (-issueIdx * tracks[1].rowHeight) + 'px)';
+      prevA = audIdx; prevI = issueIdx;
     }
 
     // Never repeat the same change-mode twice in a row, otherwise we get
