@@ -200,6 +200,16 @@
   }
   nav a:hover { opacity: 0.6; }
 
+  nav a.has-chevron {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  nav a.has-chevron svg {
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
   .nav-cta {
     background: var(--saffron);
     color: var(--ink) !important;
@@ -793,7 +803,7 @@
       <span class="logo-word">Collective Kindness</span>
     </a>
     <ul>
-      <li><a href="#programs">Programs</a></li>
+      <li><a href="#programs" class="has-chevron">Pathways<svg width="9" height="5" viewBox="0 0 9 5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><polyline points="1,1 4.5,4 8,1"/></svg></a></li>
       <li><a href="#how">How it works</a></li>
       <li><a href="#impact">Impact</a></li>
       <li><a href="#about">About</a></li>
