@@ -42,7 +42,8 @@
     --bg-deep:          var(--parchment-deep);
     --ink:              var(--slate);
     --ink-soft:         var(--slate-soft);
-    --accent:           var(--saffron);
+    --accent:           var(--saffron);   /* brand color — sparing */
+    --emphasis:         #2D5BE0;          /* italic emphasis + links — Gates-blue range */
 
     --hairline:         rgba(61, 70, 84, 0.14);
     --hairline-strong:  rgba(61, 70, 84, 0.32);
@@ -196,9 +197,38 @@
     margin-bottom: 48px;
   }
 
-  h1.hero-headline em {
-    color: var(--ink);
+  h1.hero-headline em,
+  .em-blue {
+    color: var(--emphasis);
     font-style: italic;
+    font-weight: 400;
+  }
+
+  /* ─── MISSION ───────────────────────────────────────── */
+  .mission {
+    padding: clamp(120px, 22vh, 260px) 0;
+    border-bottom: 1px solid var(--hairline);
+    background: var(--bg);
+  }
+
+  .mission-inner {
+    max-width: 26ch;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .mission .label {
+    display: block;
+    margin-bottom: 56px;
+  }
+
+  .mission-statement {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(40px, 6.4vw, 100px);
+    line-height: 1.06;
+    letter-spacing: -0.022em;
+    color: var(--ink);
   }
 
   .hero-sub {
@@ -703,6 +733,17 @@
     </div>
   </div>
 </header>
+
+<section class="mission" id="mission">
+  <div class="wrap">
+    <div class="mission-inner">
+      <span class="label">— Our mission</span>
+      <p class="mission-statement">
+        To help Jewish families from <em class="em-blue">all</em> backgrounds achieve <em class="em-blue">lasting</em> emotional and financial stability.
+      </p>
+    </div>
+  </div>
+</section>
 
 <section class="problem" id="problem">
   <div class="wrap">
