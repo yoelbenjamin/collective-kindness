@@ -114,6 +114,7 @@
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;                  /* contain horizontal bleed without vertical clipping */
   }
 
   .wrap {
@@ -175,6 +176,14 @@
     margin-left: 0;
     transform: translateY(7px);
   }
+  .brand-icon {
+    display: inline-block;
+    width: 20px;
+    height: 22px;
+    background: url('images/logos/ck-logo.webp') no-repeat left center;
+    background-size: auto 100%;
+    flex-shrink: 0;
+  }
   .logo-word {
     font-family: var(--serif);
     font-size: 19px;
@@ -225,9 +234,21 @@
   .hero {
     padding: clamp(80px, 14vh, 160px) 0 clamp(60px, 10vh, 120px);
     position: relative;
-    overflow: hidden;
+  }
+  .hero-olive {
+    position: absolute;
+    left: -80px;
+    right: -40px;
+    bottom: -200px;
+    width: calc(100% + 120px);
+    height: auto;
+    pointer-events: none;
+    color: #3F3614;
+    opacity: 0.12;
+    z-index: 0;
   }
   .hero .wrap { position: relative; z-index: 2; text-align: center; }    /* centered hero text, above background objects */
+
 
   /* ─── HERO OBJECTS (placeholder slots — swap to <img> once renders arrive) ─── */
   .hero-object {
@@ -239,12 +260,11 @@
     width: 100%;
     height: auto;
     display: block;
-    /* Directional shadow: light from upper-left, shadow falls toward
-       lower-right. Layered — tight contact shadow + longer cast shadow —
-       so objects feel sitting on the page rather than floating off it. */
+    /* Soft directional shadow: light from upper-left, shadow falls toward
+       lower-right. Layered — tight contact shadow + longer cast shadow. */
     filter:
-      drop-shadow(2px 3px 4px rgba(49, 58, 68, 0.10))
-      drop-shadow(10px 18px 28px rgba(49, 58, 68, 0.18));
+      drop-shadow(1px 2px 3px rgba(49, 58, 68, 0.06))
+      drop-shadow(4px 8px 14px rgba(49, 58, 68, 0.08));
   }
   /* placeholder styling — visible while real assets are missing */
   .hero-object--placeholder {
@@ -262,30 +282,30 @@
     line-height: 1.3;
   }
 
-  /* LEFT side — gambling motifs (poker chip + dice) */
-  .hero-object--chip {
-    width: 110px;
-    height: 110px;
-    bottom: 38%;
-    left: 20%;
-    z-index: 1;
-    transform: rotate(-8deg);
-  }
+  /* RIGHT side — gambling motifs (poker chip + dice) */
   .hero-object--dice {
     width: 150px;
     height: 150px;
     bottom: 50%;
-    left: 8%;
+    right: 8%;
     z-index: 1;
     transform: rotate(4deg);
   }
+  .hero-object--chip {
+    width: 110px;
+    height: 110px;
+    bottom: calc(50% - 90px);
+    right: calc(8% + 110px);
+    z-index: 2;
+    transform: rotate(-8deg);
+  }
 
-  /* RIGHT side — paper artifact (statement), bleeds off-screen right */
+  /* LEFT side — paper artifact (statement), bleeds off-screen left */
   .hero-object--statement {
     width: 560px;
     height: 380px;
     top: 48%;
-    right: -8%;
+    left: -8%;
     z-index: 0;
     transform: rotate(12deg);
   }
@@ -363,6 +383,65 @@
     transition: none;
   }
 
+  /* ─── HERO WIDGET V2 — slot-machine reveal ──────────── */
+  .hero-widget--slot {
+    margin-top: 18px;
+  }
+  .hero-widget--slot .slot {
+    display: inline-block;
+    vertical-align: bottom;
+  }
+  .slot-window {
+    display: inline-block;
+    height: 1.5em;
+    overflow: hidden;
+    vertical-align: bottom;
+    transition: width 600ms cubic-bezier(0.77, 0, 0.175, 1);
+    will-change: width;
+  }
+  .slot-track {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: transform 600ms cubic-bezier(0.77, 0, 0.175, 1);
+    will-change: transform;
+    color: var(--ink);
+  }
+  .slot-row {
+    height: 1.5em;
+    line-height: 1.5;
+    white-space: nowrap;
+    flex-shrink: 0;
+    width: max-content;
+  }
+  .slot-row em {
+    font-style: italic;
+    color: var(--emphasis);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .slot-window, .slot-track { transition: none; }
+  }
+  .hero-widget-tag {
+    display: block;
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   .hero-trust {
     font-family: var(--sans);
     font-size: 13px;
@@ -405,6 +484,21 @@
     letter-spacing: -0.015em;
     color: var(--ink);
   }
+
+  .mission-cta {
+    display: inline-block;
+    margin-top: 48px;
+    background: var(--saffron);
+    color: var(--ink);
+    padding: 12px 24px 14px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1;
+    transition: filter 0.18s ease;
+  }
+  .mission-cta:hover { filter: brightness(0.94); }
 
   .hero-sub {
     max-width: 56ch;
@@ -598,6 +692,7 @@
     max-width: 16ch;
   }
   .section-head h2 em { font-style: italic; color: var(--ink); }
+  .programs .section-head h2 em { color: #511338; }
 
   .section-head p {
     font-size: 17px;
@@ -649,30 +744,93 @@
     border-bottom: 1px solid var(--hairline);
   }
 
+  /* ─── PARTNER LOGO MARQUEE ──────────────────────────── */
+  .partners {
+    padding: clamp(28px, 4vh, 48px) 0;
+    border-bottom: 1px solid var(--hairline);
+    overflow: hidden;
+  }
+  .partners-label {
+    text-align: center;
+    font-family: var(--serif);
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 22px;
+  }
+  .partners-track {
+    display: flex;
+    width: max-content;
+    gap: 56px;
+    animation: partners-scroll 60s linear infinite;
+    will-change: transform;
+  }
+  .partners-track img {
+    height: 32px;
+    width: auto;
+    flex-shrink: 0;
+    filter: grayscale(1) contrast(0.9);
+    opacity: 0.7;
+    object-fit: contain;
+  }
+  @keyframes partners-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .partners-track { animation: none; }
+  }
+
   .program-list {
     border-top: 1px solid var(--hairline);
   }
 
   .program {
+    position: relative;
+    isolation: isolate;
     display: grid;
-    grid-template-columns: 100px 1.4fr 2fr 1fr;
+    grid-template-columns: 1.8fr 2fr 0.9fr;
     gap: 40px;
     padding: 40px 0;
     border-bottom: 1px solid var(--hairline);
     align-items: start;
-    transition: background 0.2s;
     text-decoration: none;
     color: var(--ink);
+    /* Scroll-triggered entrance: slide in from the right, fade up. */
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 520ms cubic-bezier(0.23, 1, 0.32, 1),
+                transform 520ms cubic-bezier(0.23, 1, 0.32, 1);
   }
-  .program:hover { background: var(--bg-soft); padding-left: 12px; padding-right: 12px; }
-
-  .program-num {
-    font-family: var(--serif);
-    font-size: 11px;
-    letter-spacing: 0;
-    color: var(--ink-soft);
-    padding-top: 14px;
+  .program.is-visible { opacity: 1; transform: translateX(0); }
+  .program-list .program:nth-child(1).is-visible { transition-delay: 0ms; }
+  .program-list .program:nth-child(2).is-visible { transition-delay: 70ms; }
+  .program-list .program:nth-child(3).is-visible { transition-delay: 140ms; }
+  .program-list .program:nth-child(4).is-visible { transition-delay: 210ms; }
+  @media (prefers-reduced-motion: reduce) {
+    .program { opacity: 1; transform: none; transition: none; }
   }
+  /* Color wash sweeps across the row on hover (Emil-style: clip-path,
+     transform/opacity only, ~300ms strong ease-out, custom per-program color) */
+  .program::before {
+    content: '';
+    position: absolute;
+    inset: 0 -24px;                          /* slight bleed past gutters */
+    background: var(--program-color, var(--ink));
+    opacity: 0.07;
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 320ms cubic-bezier(0.23, 1, 0.32, 1);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .program:hover::before { clip-path: inset(0 0 0 0); }
+  @media (prefers-reduced-motion: reduce) {
+    .program::before { transition: none; }
+  }
+  .program-list .program:nth-child(1) { --program-color: #161E54; }
+  .program-list .program:nth-child(2) { --program-color: #3F3614; }
+  .program-list .program:nth-child(3) { --program-color: #2E464A; }
+  .program-list .program:nth-child(4) { --program-color: #562A11; }
+  .program:last-child { border-bottom: none; }
 
   .program-name {
     font-family: var(--serif);
@@ -681,6 +839,10 @@
     letter-spacing: -0.015em;
   }
   .program-name em { font-style: italic; color: var(--ink); }
+  .program-list .program:nth-child(1) .program-name em { color: #161E54; } /* Kosher Debt Help — dark navy */
+  .program-list .program:nth-child(2) .program-name em { color: #3F3614; } /* Shluchim Thrive — dark olive */
+  .program-list .program:nth-child(3) .program-name em { color: #2E464A; } /* The Right Bet — dark forest */
+  .program-list .program:nth-child(4) .program-name em { color: #562A11; } /* Local Chapters — deep brown */
 
   .program-desc {
     font-size: 17px;
@@ -698,13 +860,28 @@
   }
 
   .program-cta {
-    padding-top: 14px;
-    text-align: right;
-    font-family: var(--serif);
-    font-size: 11px;
-    letter-spacing: 0;
+    align-self: start;
+    justify-self: end;
+    margin-top: 10px;
+    padding: 10px 18px 12px;
+    border: 1px solid var(--ink);
+    border-radius: 4px;
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1;
     color: var(--ink);
+    transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
   }
+  .program:hover .program-cta {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+    transform: translateX(2px);
+  }
+  .program-list .program:nth-child(1):hover .program-cta { background: #161E54; border-color: #161E54; } /* Kosher Debt Help */
+  .program-list .program:nth-child(2):hover .program-cta { background: #3F3614; border-color: #3F3614; } /* Shluchim Thrive */
+  .program-list .program:nth-child(3):hover .program-cta { background: #2E464A; border-color: #2E464A; } /* The Right Bet */
+  .program-list .program:nth-child(4):hover .program-cta { background: #562A11; border-color: #562A11; } /* Local Chapters */
 
   /* ─── DONATE CTA ────────────────────────────────────── */
   .donate {
@@ -852,9 +1029,9 @@
     .section-head { grid-template-columns: 1fr; gap: 24px; }
     .steps { grid-template-columns: repeat(2, 1fr); }
     .step:nth-child(2n) { border-right: none; }
-    .program { grid-template-columns: 60px 1fr; gap: 16px; padding: 28px 0; }
-    .program-desc, .program-cta { grid-column: 2; padding-top: 0; }
-    .program-cta { text-align: left; }
+    .program { grid-template-columns: 1fr; gap: 16px; padding: 28px 0; }
+    .program-desc { padding-top: 0; }
+    .program-cta { justify-self: start; margin-top: 0; }
     .donate-inner { grid-template-columns: 1fr; gap: 40px; }
     .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
     .footer-brand { grid-column: span 2; }
@@ -867,6 +1044,7 @@
 <nav>
   <div class="wrap">
     <a href="#" class="logo" aria-label="Collective Kindness">
+      <span class="brand-icon" aria-hidden="true"></span>
       <span class="logo-word">Collective Kindness</span>
     </a>
     <ul>
@@ -881,15 +1059,69 @@
 
 <header class="hero">
 
-  <!-- HERO OBJECTS -->
-  <div class="hero-object hero-object--statement"><img src="images/image-removebg-preview%20(2).png" alt=""></div>
-  <div class="hero-object hero-object--chip"><img src="images/poker-chip-removebg-preview%20(1).png" alt=""></div>
-  <div class="hero-object hero-object--dice"><img src="images/dice-removebg-preview%20(1).png" alt=""></div>
+  <!-- Olive branch — hand-drawn ink stroke, low opacity, traverses bottom of hero -->
+  <svg class="hero-olive" viewBox="0 0 1200 320" aria-hidden="true" focusable="false">
+    <g stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <!-- Long flowing stem from lower-left, climbing to upper-right -->
+      <path d="M 20 280 Q 200 240 400 200 T 800 130 Q 1000 90 1185 50"/>
+      <!-- Leaf pairs (narrow, lanceolate) -->
+      <path d="M 120 263 Q 90 286 48 285 Q 76 268 120 263 Z"/>
+      <path d="M 120 263 Q 110 240 80 220 Q 102 246 120 263 Z"/>
+      <path d="M 240 240 Q 210 263 166 262 Q 194 245 240 240 Z"/>
+      <path d="M 240 240 Q 228 215 200 193 Q 222 220 240 240 Z"/>
+      <path d="M 370 213 Q 340 234 296 232 Q 324 218 370 213 Z"/>
+      <path d="M 370 213 Q 358 188 328 167 Q 350 195 370 213 Z"/>
+      <path d="M 500 187 Q 470 208 428 204 Q 456 192 500 187 Z"/>
+      <path d="M 500 187 Q 488 161 458 140 Q 482 168 500 187 Z"/>
+      <path d="M 640 158 Q 612 179 568 175 Q 596 162 640 158 Z"/>
+      <path d="M 640 158 Q 628 131 598 110 Q 620 138 640 158 Z"/>
+      <path d="M 790 132 Q 760 153 716 149 Q 744 137 790 132 Z"/>
+      <path d="M 790 132 Q 778 104 750 82 Q 772 110 790 132 Z"/>
+      <path d="M 950 102 Q 920 123 878 117 Q 906 105 950 102 Z"/>
+      <path d="M 950 102 Q 940 76 914 54 Q 930 80 950 102 Z"/>
+      <path d="M 1100 70 Q 1070 90 1030 84 Q 1056 73 1100 70 Z"/>
+      <path d="M 1100 70 Q 1090 44 1066 24 Q 1082 50 1100 70 Z"/>
+    </g>
+    <!-- Olives — egg-shaped, clustered in pairs/threes -->
+    <g fill="currentColor">
+      <ellipse cx="318" cy="248" rx="8" ry="13" transform="rotate(-22 318 248)"/>
+      <ellipse cx="340" cy="270" rx="8" ry="13" transform="rotate(-12 340 270)"/>
+      <ellipse cx="568" cy="198" rx="8" ry="13" transform="rotate(-28 568 198)"/>
+      <ellipse cx="588" cy="218" rx="8" ry="13" transform="rotate(-18 588 218)"/>
+      <ellipse cx="852" cy="138" rx="8" ry="13" transform="rotate(-32 852 138)"/>
+      <ellipse cx="872" cy="156" rx="8" ry="13" transform="rotate(-22 872 156)"/>
+    </g>
+    <!-- Olive stems (peduncles) connecting fruit to branch -->
+    <g stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round">
+      <path d="M 318 235 L 326 222"/>
+      <path d="M 340 257 L 348 244"/>
+      <path d="M 568 185 L 575 172"/>
+      <path d="M 588 205 L 595 192"/>
+      <path d="M 852 125 L 860 112"/>
+      <path d="M 872 143 L 880 130"/>
+    </g>
+  </svg>
 
   <div class="wrap">
     <h1 class="hero-headline scroll-focus">We exist so no one has to face the hardest moments <em class="em-blue">alone</em>.</h1>
-    <p class="hero-widget" aria-label="Programs and audiences">
-      <span class="widget-pill">We help <a class="pill" data-pill="audience" href="#"><span class="pill-text">Jewish families</span></a> with <a class="pill" data-pill="issue" href="#"><span class="pill-text">debt</span></a>.</span>
+    <p class="hero-widget hero-widget--slot" aria-label="Programs and audiences">
+      <span class="sr-only">We help Jewish families with debt.</span>
+      <span class="widget-pill" aria-hidden="true">We help <span class="slot" data-slot="audience"><span class="slot-window"><span class="slot-track">
+        <span class="slot-row">Jewish families</span>
+        <span class="slot-row">individuals</span>
+        <span class="slot-row">Shluchim</span>
+        <span class="slot-row">couples</span>
+        <span class="slot-row">professionals</span>
+      </span></span></span> with <span class="slot" data-slot="issue"><span class="slot-window"><span class="slot-track">
+        <span class="slot-row">debt</span>
+        <span class="slot-row">gambling addiction</span>
+        <span class="slot-row">divorce</span>
+        <span class="slot-row">housing insecurity</span>
+        <span class="slot-row">career transitions</span>
+        <span class="slot-row">emotional challenges</span>
+        <span class="slot-row">financial pressure</span>
+        <span class="slot-row">legal advocacy</span>
+      </span></span></span>.</span>
     </p>
     <p class="hero-trust">Founded 2023 &middot; 501(c)(3) non-profit organization</p>
   </div>
@@ -897,8 +1129,8 @@
 
 <section class="problem" id="problem">
   <div class="wrap">
-    <p class="problem-statement scroll-focus scroll-darken">
-      In the Jewish community, the deepest financial struggles are the ones nobody talks about. The debt that grows in private. The gambling nobody knows about. The community leader who can&rsquo;t admit they&rsquo;re underwater. What&rsquo;s missing isn&rsquo;t help. It&rsquo;s a place <em class="em-blue">quiet enough</em> to talk about it.
+    <p class="problem-statement scroll-darken">
+      In the Jewish community, the deepest financial struggles are the ones nobody talks about. The debt that grows in private. The gambling nobody knows about. The community leader who can&rsquo;t admit they&rsquo;re underwater. What&rsquo;s missing is a place for the ones who are in the <em class="em-blue">messy middle</em>.
     </p>
   </div>
 </section>
@@ -907,26 +1139,15 @@
   <div class="wrap">
     <div class="section-head">
       <div>
-        <h2>Four pathways, <em>one organization.</em></h2>
+        <h2>Four pathways,<br><em>one organization.</em></h2>
       </div>
       <p>
-        Each program is designed for a specific kind of struggle. Same case-management spine, same donor accountability, different on-ramps for different needs.
+        Each program is uniquely designed for different needs and experiences.
       </p>
     </div>
 
     <div class="program-list">
       <a href="#" class="program">
-        <div class="program-num">01</div>
-        <div class="program-name"><em>The Right Bet</em></div>
-        <div class="program-desc">
-          Gambling addiction recovery for Jewish individuals and families — confidential, dignified, never alone.
-          <span class="meta">Anonymous · 24/7 crisis line · White-glove referrals</span>
-        </div>
-        <div class="program-cta">Visit →</div>
-      </a>
-
-      <a href="#" class="program">
-        <div class="program-num">02</div>
         <div class="program-name"><em>Kosher Debt Help</em></div>
         <div class="program-desc">
           Honest debt guidance from people who genuinely want to help. No commissions, no kickbacks, no shortcuts.
@@ -936,25 +1157,68 @@
       </a>
 
       <a href="#" class="program">
-        <div class="program-num">03</div>
         <div class="program-name"><em>Shluchim Thrive</em></div>
         <div class="program-desc">
-          Financial stability and tailored support for Chabad emissaries — built by people with Shlichus experience.
+          Financial stability and tailored support for Chabad emissaries, built by people with Shlichus experience.
           <span class="meta">Continental US · Confidential · Advisory board of rabbanim</span>
         </div>
         <div class="program-cta">Visit →</div>
       </a>
 
       <a href="#" class="program">
-        <div class="program-num">04</div>
+        <div class="program-name"><em>The Right Bet</em></div>
+        <div class="program-desc">
+          Gambling addiction recovery for Jewish individuals and families. Confidential, dignified, never alone.
+          <span class="meta">Anonymous · 24/7 crisis line · White-glove referrals</span>
+        </div>
+        <div class="program-cta">Visit →</div>
+      </a>
+
+      <a href="#" class="program">
         <div class="program-name"><em>Local Chapters</em></div>
         <div class="program-desc">
-          In-person community in seven cities — Atlanta, Baltimore, Chicago, Denver, Kingston PA, Long Island, South Florida.
+          In-person community in seven cities: Atlanta, Baltimore, Chicago, Denver, Kingston PA, Long Island, South Florida.
           <span class="meta">Volunteer-led · Locally rooted · Nationally supported</span>
         </div>
         <div class="program-cta">Find yours →</div>
       </a>
     </div>
+  </div>
+</section>
+
+<section class="partners" aria-label="Partner organizations">
+  <p class="partners-label">Our partners &amp; featured in</p>
+  <div class="partners-track">
+    <img src="images/logos/partner-logo-1.png" alt="">
+    <img src="images/logos/walder-logo.png" alt="">
+    <img src="images/logos/community-chest.png" alt="">
+    <img src="images/logos/the-mitzva-fund.png" alt="">
+    <img src="images/logos/main-logo.png" alt="">
+    <img src="images/logos/freeloan.png" alt="">
+    <img src="images/logos/ozer-logo.avif" alt="">
+    <img src="images/logos/dca25e-logo.avif" alt="">
+    <img src="images/logos/channels4-profile.jpg" alt="">
+    <img src="images/logos/channels4-profile-1.jpg" alt="">
+    <img src="images/logos/partner-screenshot-2024-04-15.png" alt="">
+    <img src="images/logos/partner-screenshot-2024-05-06.png" alt="">
+    <img src="images/logos/partner-screenshot-2025-09-16.png" alt="">
+    <img src="images/logos/partner-screenshot-2025-12-10.png" alt="">
+    <img src="images/logos/logo-footer-1.png" alt="">
+    <img src="images/logos/partner-logo-1.png" alt="" aria-hidden="true">
+    <img src="images/logos/walder-logo.png" alt="" aria-hidden="true">
+    <img src="images/logos/community-chest.png" alt="" aria-hidden="true">
+    <img src="images/logos/the-mitzva-fund.png" alt="" aria-hidden="true">
+    <img src="images/logos/main-logo.png" alt="" aria-hidden="true">
+    <img src="images/logos/freeloan.png" alt="" aria-hidden="true">
+    <img src="images/logos/ozer-logo.avif" alt="" aria-hidden="true">
+    <img src="images/logos/dca25e-logo.avif" alt="" aria-hidden="true">
+    <img src="images/logos/channels4-profile.jpg" alt="" aria-hidden="true">
+    <img src="images/logos/channels4-profile-1.jpg" alt="" aria-hidden="true">
+    <img src="images/logos/partner-screenshot-2024-04-15.png" alt="" aria-hidden="true">
+    <img src="images/logos/partner-screenshot-2024-05-06.png" alt="" aria-hidden="true">
+    <img src="images/logos/partner-screenshot-2025-09-16.png" alt="" aria-hidden="true">
+    <img src="images/logos/partner-screenshot-2025-12-10.png" alt="" aria-hidden="true">
+    <img src="images/logos/logo-footer-1.png" alt="" aria-hidden="true">
   </div>
 </section>
 
@@ -964,6 +1228,7 @@
       <p class="mission-statement scroll-focus scroll-darken">
         Our mission is to help <em class="em-blue">all</em> Jewish people get back on their feet, toward emotional and financial stability. A <em class="em-blue">hand-up</em>, not a handout.
       </p>
+      <a href="#about" class="mission-cta">Our story →</a>
     </div>
   </div>
 </section>
@@ -1090,22 +1355,6 @@
   </div>
 </section>
 
-<section class="trust">
-  <div class="wrap">
-    <div class="trust-grid">
-      <span class="label">As featured in</span>
-      <div class="trust-logos">
-        <span class="trust-logo">eJewish Philanthropy</span>
-        <span class="trust-logo">Ami Magazine</span>
-        <span class="trust-logo">Hamodia</span>
-        <span class="trust-logo">Jewish Link</span>
-        <span class="trust-logo">Aish</span>
-        <span class="trust-logo">Jew in the City</span>
-      </div>
-    </div>
-  </div>
-</section>
-
 <footer>
   <div class="wrap">
     <div class="footer-grid">
@@ -1116,9 +1365,9 @@
       <div class="footer-col">
         <h4>Programs</h4>
         <ul>
-          <li><a href="#">The Right Bet</a></li>
           <li><a href="#">Kosher Debt Help</a></li>
           <li><a href="#">Shluchim Thrive</a></li>
+          <li><a href="#">The Right Bet</a></li>
           <li><a href="#">Local Chapters</a></li>
         </ul>
       </div>
@@ -1166,6 +1415,25 @@
       });
     }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
     targets.forEach(el => observer.observe(el));
+  })();
+
+  // Programs: stagger entrance, slide in from the right, once per row.
+  (function() {
+    const programs = document.querySelectorAll('.program-list .program');
+    if (!programs.length) return;
+    if (!('IntersectionObserver' in window)) {
+      programs.forEach(p => p.classList.add('is-visible'));
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+    programs.forEach(p => observer.observe(p));
   })();
 
   // Scroll-darken: word-by-word color reveal driven by scroll position.
@@ -1234,56 +1502,126 @@
     update();
   })();
 
-  // Hero widget — simple textContent swap with leave/enter animation.
-  // Pills size to their content naturally; surrounding text shifts a
-  // little on each rotation but the motion reads as part of the change.
+  // Hero widget — slot-machine reveal. All options live in the DOM,
+  // tucked behind an overflow:hidden window. Animate translateY on the
+  // track + width on the window in lockstep, same eased curve, so the
+  // sentence reflows smoothly and a different word "lands" in the slot.
+  // Audience + issue are independent — each tick we pick a random valid
+  // pair, sometimes holding one slot and changing the other (Pentagram
+  // style), sometimes changing both.
   (function() {
-    const widget = document.querySelector('.hero-widget');
+    const widget = document.querySelector('.hero-widget--slot');
     if (!widget) return;
 
-    const combos = [
-      { audience: 'Jewish families',   issue: 'debt',                   href: '#kosher-debt-help' },
-      { audience: 'individuals',       issue: 'gambling addiction',     href: '#the-right-bet'    },
-      { audience: 'Shluchim',          issue: 'financial pressure',     href: '#shluchim-thrive'  },
-      { audience: 'anyone in crisis',  issue: 'coaching & care',        href: '#apply'            },
+    const audSlot = widget.querySelector('[data-slot="audience"]');
+    const issueSlot = widget.querySelector('[data-slot="issue"]');
+    if (!audSlot || !issueSlot) return;
+
+    // Audiences (row indices): 0 Jewish families, 1 individuals, 2 Shluchim,
+    //                          3 couples, 4 professionals
+    // Issues:    0 debt, 1 gambling addiction, 2 divorce, 3 housing insecurity,
+    //            4 career transitions, 5 emotional challenges, 6 financial pressure,
+    //            7 legal advocacy
+    const validPairs = [
+      [0,0],[0,2],[0,3],[0,5],[0,7],          // Jewish families
+      [1,1],[1,3],[1,4],[1,7],                // individuals
+      [2,0],[2,6],                            // Shluchim
+      [3,0],[3,1],[3,2],[3,3],[3,5],[3,7],    // couples
+      [4,4],                                  // professionals
     ];
 
-    const audienceLink = widget.querySelector('[data-pill="audience"]');
-    const issueLink    = widget.querySelector('[data-pill="issue"]');
-    const audienceText = audienceLink.querySelector('.pill-text');
-    const issueText    = issueLink.querySelector('.pill-text');
+    const tracks = [audSlot, issueSlot].map(s => ({
+      window: s.querySelector('.slot-window'),
+      track: s.querySelector('.slot-track'),
+      rows: s.querySelectorAll('.slot-row'),
+      widths: [],
+      rowHeight: 0,
+    }));
 
-    function swap(textEl, newText) {
-      textEl.classList.add('is-leaving');
-      setTimeout(() => {
-        textEl.classList.remove('is-leaving');
-        textEl.classList.add('is-entering');
-        textEl.textContent = newText;
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => textEl.classList.remove('is-entering'));
-        });
-      }, 220);
+    function measure() {
+      tracks.forEach(t => {
+        t.widths = Array.from(t.rows).map(r => r.getBoundingClientRect().width);
+        t.rowHeight = t.rows[0].getBoundingClientRect().height;
+      });
     }
 
-    function update(idx) {
-      const combo = combos[idx];
-      audienceLink.setAttribute('href', combo.href);
-      issueLink.setAttribute('href', combo.href);
-      swap(audienceText, combo.audience);
-      swap(issueText, combo.issue);
+    function paint(audIdx, issueIdx) {
+      tracks[0].window.style.width = tracks[0].widths[audIdx] + 'px';
+      tracks[0].track.style.transform = 'translateY(' + (-audIdx * tracks[0].rowHeight) + 'px)';
+      tracks[1].window.style.width = tracks[1].widths[issueIdx] + 'px';
+      tracks[1].track.style.transform = 'translateY(' + (-issueIdx * tracks[1].rowHeight) + 'px)';
     }
 
-    let i = 0;
-    let paused = false;
-    setInterval(() => {
-      if (paused) return;
-      i = (i + 1) % combos.length;
-      update(i);
-    }, 3500);
+    // Never repeat the same change-mode twice in a row, otherwise we get
+    // runs like "issue holds × 5" which read as the same word stuck on
+    // screen. Forcing a switch keeps the rhythm varied.
+    let lastMode = 'both';
+    function pickNext(curA, curI) {
+      const modes = ['aud-hold', 'iss-hold', 'both'].filter(m => m !== lastMode);
+      const mode = modes[Math.floor(Math.random() * modes.length)];
+      let pool;
+      if (mode === 'aud-hold') {
+        pool = validPairs.filter(([a, i]) => a === curA && i !== curI);
+      } else if (mode === 'iss-hold') {
+        pool = validPairs.filter(([a, i]) => i === curI && a !== curA);
+      } else {
+        pool = validPairs.filter(([a, i]) => a !== curA && i !== curI);
+      }
+      if (!pool.length) {
+        pool = validPairs.filter(([a, i]) => !(a === curA && i === curI));
+      }
+      lastMode = mode;
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
 
-    [audienceLink, issueLink].forEach(el => {
-      el.addEventListener('mouseenter', () => { paused = true; });
-      el.addEventListener('mouseleave', () => { paused = false; });
+    function init() {
+      measure();
+      tracks.forEach(t => {
+        t.window.style.transition = 'none';
+        t.track.style.transition = 'none';
+      });
+      paint(0, 0);
+      void widget.offsetWidth;
+      tracks.forEach(t => {
+        t.window.style.transition = '';
+        t.track.style.transition = '';
+      });
+    }
+
+    function start() {
+      let curA = 0, curI = 0;
+      let paused = false;
+      setInterval(() => {
+        if (paused) return;
+        const [a, i] = pickNext(curA, curI);
+        curA = a; curI = i;
+        paint(curA, curI);
+      }, 2200);
+
+      widget.addEventListener('mouseenter', () => { paused = true; });
+      widget.addEventListener('mouseleave', () => { paused = false; });
+    }
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => { init(); start(); });
+    } else {
+      init();
+      start();
+    }
+
+    // Re-measure on resize (font-size scales with viewport width)
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        measure();
+        // Repaint at current indices read off the current transforms
+        const yA = (tracks[0].track.style.transform.match(/-?\d+(?:\.\d+)?/) || [0])[0];
+        const yI = (tracks[1].track.style.transform.match(/-?\d+(?:\.\d+)?/) || [0])[0];
+        const aIdx = Math.round(-parseFloat(yA) / tracks[0].rowHeight);
+        const iIdx = Math.round(-parseFloat(yI) / tracks[1].rowHeight);
+        paint(aIdx, iIdx);
+      }, 120);
     });
   })();
 </script>
