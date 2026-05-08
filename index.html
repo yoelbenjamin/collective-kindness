@@ -259,40 +259,40 @@
     line-height: 1.3;
   }
 
-  /* LEFT side — envelope + statement, behind hero text (z-index 0) */
-  .hero-object--envelope {
-    width: 240px;
-    height: 150px;
-    top: 18%;
-    left: -56px;
-    z-index: 0;
-    transform: rotate(-7deg);
-  }
-  .hero-object--statement {
-    width: 340px;
-    height: 240px;
-    top: 28%;
-    left: 10%;
-    z-index: 0;
-    transform: rotate(4deg);
-  }
-
-  /* RIGHT side — poker chip + dice clustered, shifted leftward (z-index 1) */
+  /* LEFT side — gambling motifs (poker chip + dice) */
   .hero-object--chip {
     width: 110px;
     height: 110px;
     bottom: 28%;
-    right: 22%;
+    left: 22%;
     z-index: 1;
-    transform: rotate(8deg);
+    transform: rotate(-8deg);
   }
   .hero-object--dice {
     width: 150px;
     height: 150px;
     bottom: 50%;
-    right: 8%;
+    left: 8%;
     z-index: 1;
+    transform: rotate(4deg);
+  }
+
+  /* RIGHT side — paper artifacts (statement) */
+  .hero-object--statement {
+    width: 340px;
+    height: 240px;
+    top: 28%;
+    right: 10%;
+    z-index: 0;
     transform: rotate(-4deg);
+  }
+  .hero-object--envelope {
+    width: 240px;
+    height: 150px;
+    top: 18%;
+    right: -56px;
+    z-index: 0;
+    transform: rotate(7deg);
   }
 
   @media (max-width: 900px) {
@@ -337,35 +337,27 @@
     display: inline;
     white-space: nowrap;
   }
-  /* Pentagram-style slot-machine pill: fixed-height window with all
-     possible words stacked vertically inside; we translateY the stack
-     to reveal each word. No text swapping, no flicker, just transforms.
-     Surrounding "We help" / "with" / "." text is held in place by
-     animating the pill's width to match the active word. */
   .hero-widget .pill {
     text-decoration: none;
     color: var(--ink);
     cursor: pointer;
+    transition: opacity 0.2s ease;
+    display: inline;
+  }
+  .hero-widget .pill:hover { opacity: 0.55; }
+  .hero-widget .pill .pill-text {
     display: inline-block;
-    height: 1em;                                /* one line-height equivalent */
-    overflow: hidden;
-    vertical-align: -0.18em;                    /* nudges window onto the surrounding baseline */
-    transition: width 0.5s cubic-bezier(0.32, 0.72, 0, 1),
-                opacity 0.2s ease;
+    transition: opacity 0.22s ease-out,
+                transform 0.34s cubic-bezier(0.32, 0.72, 0, 1);
   }
-  .hero-widget .pill:hover { opacity: 0.6; }
-  .hero-widget .pill-stack {
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
-    will-change: transform;
+  .hero-widget .pill .pill-text.is-leaving {
+    opacity: 0;
+    transform: translateY(-6px);
   }
-  .hero-widget .pill-text {
-    height: 1em;
-    line-height: 1;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
+  .hero-widget .pill .pill-text.is-entering {
+    opacity: 0;
+    transform: translateY(6px);
+    transition: none;
   }
 
   .hero-trust {
@@ -894,7 +886,7 @@
   <div class="wrap">
     <h1 class="hero-headline scroll-focus">We exist so no one has to face the hardest moments <em class="em-blue">alone</em>.</h1>
     <p class="hero-widget" aria-label="Programs and audiences">
-      <span class="widget-pill">We help <a class="pill" data-pill="audience" href="#"><span class="pill-stack" data-stack="audience"><span class="pill-text">Jewish families</span><span class="pill-text">individuals</span><span class="pill-text">Shluchim</span><span class="pill-text">anyone in crisis</span></span></a> with <a class="pill" data-pill="issue" href="#"><span class="pill-stack" data-stack="issue"><span class="pill-text">debt</span><span class="pill-text">gambling addiction</span><span class="pill-text">financial pressure</span><span class="pill-text">coaching &amp; care</span></span></a>.</span>
+      <span class="widget-pill">We help <a class="pill" data-pill="audience" href="#"><span class="pill-text">Jewish families</span></a> with <a class="pill" data-pill="issue" href="#"><span class="pill-text">debt</span></a>.</span>
     </p>
     <p class="hero-trust">Founded 2023 &middot; 501(c)(3) non-profit organization</p>
   </div>
@@ -1239,51 +1231,51 @@
     update();
   })();
 
-  // Hero widget — Pentagram-style slot machine.
-  // Each pill is a fixed-height window over a stack of pre-rendered words.
-  // We translateY the stack to reveal each word; pill width animates to
-  // match the active word so surrounding "We help" / "with" / "." text
-  // slides smoothly rather than jumping.
+  // Hero widget — simple textContent swap with leave/enter animation.
+  // Pills size to their content naturally; surrounding text shifts a
+  // little on each rotation but the motion reads as part of the change.
   (function() {
     const widget = document.querySelector('.hero-widget');
     if (!widget) return;
 
     const combos = [
-      { href: '#kosher-debt-help' },
-      { href: '#the-right-bet'    },
-      { href: '#shluchim-thrive'  },
-      { href: '#apply'            },
+      { audience: 'Jewish families',   issue: 'debt',                   href: '#kosher-debt-help' },
+      { audience: 'individuals',       issue: 'gambling addiction',     href: '#the-right-bet'    },
+      { audience: 'Shluchim',          issue: 'financial pressure',     href: '#shluchim-thrive'  },
+      { audience: 'anyone in crisis',  issue: 'coaching & care',        href: '#apply'            },
     ];
 
-    const audienceLink  = widget.querySelector('[data-pill="audience"]');
-    const issueLink     = widget.querySelector('[data-pill="issue"]');
-    const audienceStack = widget.querySelector('[data-stack="audience"]');
-    const issueStack    = widget.querySelector('[data-stack="issue"]');
-    const audienceItems = audienceStack.querySelectorAll('.pill-text');
-    const issueItems    = issueStack.querySelectorAll('.pill-text');
+    const audienceLink = widget.querySelector('[data-pill="audience"]');
+    const issueLink    = widget.querySelector('[data-pill="issue"]');
+    const audienceText = audienceLink.querySelector('.pill-text');
+    const issueText    = issueLink.querySelector('.pill-text');
 
-    function applyIndex(i) {
-      // Slide each stack to the i-th item.
-      audienceStack.style.transform = `translateY(-${i * 100}%)`;
-      issueStack.style.transform    = `translateY(-${i * 100}%)`;
-      // Animate pill width to match the active word's natural width.
-      audienceLink.style.width = audienceItems[i].offsetWidth + 'px';
-      issueLink.style.width    = issueItems[i].offsetWidth + 'px';
-      // Update link target.
-      audienceLink.setAttribute('href', combos[i].href);
-      issueLink.setAttribute('href',    combos[i].href);
+    function swap(textEl, newText) {
+      textEl.classList.add('is-leaving');
+      setTimeout(() => {
+        textEl.classList.remove('is-leaving');
+        textEl.classList.add('is-entering');
+        textEl.textContent = newText;
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => textEl.classList.remove('is-entering'));
+        });
+      }, 220);
     }
 
-    // Initialize widths to the first word so the very first transition
-    // has a known starting point.
-    applyIndex(0);
+    function update(idx) {
+      const combo = combos[idx];
+      audienceLink.setAttribute('href', combo.href);
+      issueLink.setAttribute('href', combo.href);
+      swap(audienceText, combo.audience);
+      swap(issueText, combo.issue);
+    }
 
     let i = 0;
     let paused = false;
     setInterval(() => {
       if (paused) return;
       i = (i + 1) % combos.length;
-      applyIndex(i);
+      update(i);
     }, 3500);
 
     [audienceLink, issueLink].forEach(el => {
