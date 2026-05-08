@@ -210,6 +210,32 @@
   }
   .btn:hover .arrow { transform: translateX(3px); }
 
+  /* ─── PROBLEM ───────────────────────────────────────── */
+  .problem {
+    padding: clamp(100px, 18vh, 220px) 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .problem .label {
+    display: block;
+    margin-bottom: 48px;
+  }
+
+  .problem-statement {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(38px, 5.6vw, 88px);
+    line-height: 1.04;
+    letter-spacing: -0.022em;
+    max-width: 22ch;
+    color: var(--ink);
+  }
+
+  .problem-statement .soft {
+    color: var(--ink-soft);
+    opacity: 0.55;
+  }
+
   /* ─── STATS ─────────────────────────────────────────── */
   .stats {
     padding: clamp(60px, 8vh, 100px) 0;
@@ -633,6 +659,15 @@
     </div>
   </div>
 </header>
+
+<section class="problem" id="problem">
+  <div class="wrap">
+    <span class="label label-green">— The problem</span>
+    <p class="problem-statement">
+      The chesed system was built for emergencies, not journeys.<span class="soft"> The same families, the same crises, the same shame &mdash; handed checks and shown the door, without a plan, a partner, or anyone staying long enough to help them stand.</span> Nobody graduates from a handout.
+    </p>
+  </div>
+</section>
 
 <section class="stats" id="impact">
   <div class="wrap">
