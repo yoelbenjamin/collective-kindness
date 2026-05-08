@@ -825,7 +825,7 @@
   <div class="wrap">
     <span class="label label-green">The problem</span>
     <p class="problem-statement scroll-focus scroll-darken">
-      The chesed system was built for emergencies, not journeys. Our families don&rsquo;t need a check. They need a coach who stays. Nobody graduates from a handout.
+      Most Jewish families in trouble don&rsquo;t look like it. Bills paid. Kids in school. Credit cards quietly growing. Help in the Jewish community wasn&rsquo;t built for this.
     </p>
   </div>
 </section>
@@ -1192,8 +1192,7 @@
       audienceLink.setAttribute('href', combo.href);
       issueLink.setAttribute('href', combo.href);
       swap(audienceText, combo.audience);
-      // Stagger the right pill so the cascade ripples left → right (flip-clock feel)
-      setTimeout(() => swap(issueText, combo.issue), 140);
+      swap(issueText, combo.issue);
     }
 
     function tick() {
