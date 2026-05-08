@@ -88,7 +88,7 @@
   }
 
   .label-ink { color: var(--ink); }
-  .label-green { color: var(--saffron); }
+  .label-green { color: var(--ink); }   /* legacy class name — saffron isn't a text color */
 
   /* ─── NAV ───────────────────────────────────────────── */
   nav {
@@ -565,7 +565,7 @@
   }
   .donate h2 em {
     font-style: italic;
-    color: var(--saffron);
+    color: var(--bg);
   }
 
   .donate-side {
@@ -588,7 +588,7 @@
   }
   .donate .btn-primary:hover { background: var(--saffron); }
 
-  .donate .label { color: var(--saffron); }
+  .donate .label { color: var(--bg-deep); }
 
   /* ─── TRUST ─────────────────────────────────────────── */
   .trust {
