@@ -342,40 +342,35 @@
     display: inline;
     white-space: nowrap;
   }
+  /* Pentagram-style slot-machine pill: fixed-height window with all
+     possible words stacked vertically inside; we translateY the stack
+     to reveal each word. No text swapping, no flicker, just transforms.
+     Surrounding "We help" / "with" / "." text is held in place by
+     animating the pill's width to match the active word. */
   .hero-widget .pill {
     text-decoration: none;
     color: var(--ink);
     cursor: pointer;
     display: inline-block;
-    text-align: center;
-    vertical-align: baseline;
-    /* min-width is set dynamically by JS to match incoming content width;
-       transition makes surrounding "We help" / "with" / "." slide smoothly
-       instead of jumping when pill content changes. */
-    transition: min-width 0.42s cubic-bezier(0.32, 0.72, 0, 1),
+    height: 1em;                                /* one line-height equivalent */
+    overflow: hidden;
+    vertical-align: -0.18em;                    /* nudges window onto the surrounding baseline */
+    transition: width 0.5s cubic-bezier(0.32, 0.72, 0, 1),
                 opacity 0.2s ease;
   }
-  .hero-widget .pill:hover { opacity: 0.55; }
-  .hero-widget .pill .pill-text {
-    display: inline-block;
-    transition: opacity 0.22s ease-out,
-                transform 0.34s cubic-bezier(0.32, 0.72, 0, 1);   /* Apple-ish, organic */
+  .hero-widget .pill:hover { opacity: 0.6; }
+  .hero-widget .pill-stack {
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+    will-change: transform;
   }
-  .hero-widget .pill .pill-text.is-leaving {
-    opacity: 0;
-    transform: translateY(-6px);                  /* old word travels up + out — subtle */
-  }
-  .hero-widget .pill .pill-text.is-entering {
-    opacity: 0;
-    transform: translateY(6px);                   /* new word starts below — subtle */
-    transition: none;                             /* jump to start instantly — no animation through resting */
-  }
-  .hero-widget .pill .pill-chevron {
-    font-size: 0.6em;
-    opacity: 0.5;
-    margin-left: 4px;
-    display: inline-block;
-    vertical-align: middle;
+  .hero-widget .pill-text {
+    height: 1em;
+    line-height: 1;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
   }
 
   .hero-trust {
@@ -904,7 +899,7 @@
   <div class="wrap">
     <h1 class="hero-headline scroll-focus">We exist so no one has to face the hardest moments <em class="em-blue">alone</em>.</h1>
     <p class="hero-widget" aria-label="Programs and audiences">
-      <span class="widget-pill">We help <a class="pill" data-pill="audience" href="#"><span class="pill-text">Jewish families</span></a> with <a class="pill" data-pill="issue" href="#"><span class="pill-text">debt</span></a>.</span>
+      <span class="widget-pill">We help <a class="pill" data-pill="audience" href="#"><span class="pill-stack" data-stack="audience"><span class="pill-text">Jewish families</span><span class="pill-text">individuals</span><span class="pill-text">Shluchim</span><span class="pill-text">anyone in crisis</span></span></a> with <a class="pill" data-pill="issue" href="#"><span class="pill-stack" data-stack="issue"><span class="pill-text">debt</span><span class="pill-text">gambling addiction</span><span class="pill-text">financial pressure</span><span class="pill-text">coaching &amp; care</span></span></a>.</span>
     </p>
     <p class="hero-trust">Founded 2023 &middot; 501(c)(3) non-profit organization</p>
   </div>
@@ -1249,85 +1244,53 @@
     update();
   })();
 
-  // Hero widget: Pentagram-style rotating program/audience switcher.
-  // Cycles through audience+issue pairs, each pill linking to a program page.
+  // Hero widget — Pentagram-style slot machine.
+  // Each pill is a fixed-height window over a stack of pre-rendered words.
+  // We translateY the stack to reveal each word; pill width animates to
+  // match the active word so surrounding "We help" / "with" / "." text
+  // slides smoothly rather than jumping.
   (function() {
     const widget = document.querySelector('.hero-widget');
     if (!widget) return;
 
     const combos = [
-      { audience: 'Jewish families',   issue: 'debt',                   href: '#kosher-debt-help' },
-      { audience: 'individuals',       issue: 'gambling addiction',     href: '#the-right-bet'    },
-      { audience: 'Shluchim',          issue: 'financial pressure',     href: '#shluchim-thrive'  },
-      { audience: 'anyone in crisis',  issue: 'coaching & care',        href: '#apply'            },
+      { href: '#kosher-debt-help' },
+      { href: '#the-right-bet'    },
+      { href: '#shluchim-thrive'  },
+      { href: '#apply'            },
     ];
 
-    const audienceLink = widget.querySelector('[data-pill="audience"]');
-    const issueLink    = widget.querySelector('[data-pill="issue"]');
-    const audienceText = audienceLink.querySelector('.pill-text');
-    const issueText    = issueLink.querySelector('.pill-text');
+    const audienceLink  = widget.querySelector('[data-pill="audience"]');
+    const issueLink     = widget.querySelector('[data-pill="issue"]');
+    const audienceStack = widget.querySelector('[data-stack="audience"]');
+    const issueStack    = widget.querySelector('[data-stack="issue"]');
+    const audienceItems = audienceStack.querySelectorAll('.pill-text');
+    const issueItems    = issueStack.querySelectorAll('.pill-text');
 
-    // Initialize each pill's min-width to its current content's natural width
-    // so the very first rotation has a known starting value to animate from.
-    [audienceLink, issueLink].forEach(pill => {
-      const text = pill.querySelector('.pill-text');
-      pill.style.minWidth = text.offsetWidth + 'px';
-    });
+    function applyIndex(i) {
+      // Slide each stack to the i-th item.
+      audienceStack.style.transform = `translateY(-${i * 100}%)`;
+      issueStack.style.transform    = `translateY(-${i * 100}%)`;
+      // Animate pill width to match the active word's natural width.
+      audienceLink.style.width = audienceItems[i].offsetWidth + 'px';
+      issueLink.style.width    = issueItems[i].offsetWidth + 'px';
+      // Update link target.
+      audienceLink.setAttribute('href', combos[i].href);
+      issueLink.setAttribute('href',    combos[i].href);
+    }
+
+    // Initialize widths to the first word so the very first transition
+    // has a known starting point.
+    applyIndex(0);
 
     let i = 0;
     let paused = false;
-
-    // Measure the rendered width of a candidate text using a hidden clone of
-    // the actual text element — picks up font, font-stretch, weight, etc.
-    function measureWidth(text, sampleEl) {
-      const clone = sampleEl.cloneNode(false);
-      clone.textContent = text;
-      clone.style.position = 'absolute';
-      clone.style.visibility = 'hidden';
-      clone.style.whiteSpace = 'nowrap';
-      sampleEl.parentNode.appendChild(clone);
-      const w = clone.offsetWidth;
-      clone.remove();
-      return w;
-    }
-
-    function swap(textEl, newText) {
-      const pillEl = textEl.closest('.pill');
-      const newWidth = measureWidth(newText, textEl);
-
-      // Trigger pill width transition NOW (during the leave phase) so the
-      // surrounding "We help" / "with" / "." text slides smoothly instead
-      // of snapping when the new text arrives.
-      pillEl.style.minWidth = newWidth + 'px';
-
-      textEl.classList.add('is-leaving');
-      setTimeout(() => {
-        textEl.classList.remove('is-leaving');
-        textEl.classList.add('is-entering');
-        textEl.textContent = newText;
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => textEl.classList.remove('is-entering'));
-        });
-      }, 220);
-    }
-
-    function update(idx) {
-      const combo = combos[idx];
-      audienceLink.setAttribute('href', combo.href);
-      issueLink.setAttribute('href', combo.href);
-      swap(audienceText, combo.audience);
-      swap(issueText, combo.issue);
-    }
-
-    function tick() {
+    setInterval(() => {
       if (paused) return;
       i = (i + 1) % combos.length;
-      update(i);
-    }
+      applyIndex(i);
+    }, 3500);
 
-    let timer = setInterval(tick, 3500);
-
-    // Pause cycling on hover so visitors can read/click
     [audienceLink, issueLink].forEach(el => {
       el.addEventListener('mouseenter', () => { paused = true; });
       el.addEventListener('mouseleave', () => { paused = false; });
