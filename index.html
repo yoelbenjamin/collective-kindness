@@ -1134,10 +1134,10 @@
 
     function update() {
       const vh = window.innerHeight;
-      // Darkening zone: starts when element top hits 45% of viewport,
-      // completes when element top hits 14% of viewport.
-      const startLine = vh * 0.45;
-      const endLine = vh * 0.14;
+      // Darkening zone: starts when element top hits 58% of viewport (earlier trigger),
+      // completes when element top hits 22% of viewport.
+      const startLine = vh * 0.58;
+      const endLine = vh * 0.22;
       items.forEach(({ el, words }) => {
         const top = el.getBoundingClientRect().top;
         const progress = Math.max(0, Math.min(1, (startLine - top) / (startLine - endLine)));
