@@ -6,23 +6,50 @@
 <title>Collective Kindness — Helping People Help Themselves</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bone: #ECEADD;
-    --bone-deep: #E0DDCF;
-    --bone-soft: #F5F2E5;
-    --ink: #1F1D1A;
-    --ink-soft: #5C574F;
-    --hairline: rgba(31, 29, 26, 0.14);
-    --hairline-strong: rgba(31, 29, 26, 0.28);
-    --green: #2B5E49;
-    --burgundy: #7A3636;
-    --sand: #C9C2A8;
+    /* ── Primary trio (the brand) ─────────────────────── */
+    --parchment:        #EBE8DE;
+    --parchment-deep:   #DDDACE;
+    --parchment-soft:   #F2EFE5;
+    --slate:            #3D4654;   /* Weathered Slate */
+    --slate-soft:       #6A7280;
+    --saffron:          #E8D047;   /* Blooming Saffron */
 
-    --serif: 'Instrument Serif', 'Times New Roman', serif;
-    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+    /* ── Reserve palette (sub-brands, accents, charts) ── */
+    --cream:            #FBEEA0;
+    --olive-deep:       #473C16;
+    --peach:            #EFA88B;
+    --orange:           #DD7128;
+    --cocoa:            #5A2F0F;
+    --salmon:           #E08F84;
+    --brick:            #CB4837;
+    --maroon:           #4A1208;
+    --blush:            #D89BC0;
+    --magenta:          #C44C9F;
+    --plum:             #511935;
+    --sky:              #A6D3F0;
+    --royal:            #5096F2;
+    --navy:             #161B59;
+    --mint:             #B0DBC8;
+    --teal:             #62CDB1;
+    --teal-deep:        #27484C;
+
+    /* ── Working tokens (semantic) ────────────────────── */
+    --bg:               var(--parchment);
+    --bg-soft:          var(--parchment-soft);
+    --bg-deep:          var(--parchment-deep);
+    --ink:              var(--slate);
+    --ink-soft:         var(--slate-soft);
+    --accent:           var(--saffron);
+
+    --hairline:         rgba(61, 70, 84, 0.14);
+    --hairline-strong:  rgba(61, 70, 84, 0.32);
+
+    /* ── Type ─────────────────────────────────────────── */
+    --serif: 'Fraunces', 'Times New Roman', serif;
+    --sans:  'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
     --max: 1240px;
     --gutter: clamp(20px, 4vw, 56px);
@@ -33,7 +60,7 @@
   html { scroll-behavior: smooth; }
 
   body {
-    background: var(--bone);
+    background: var(--bg);
     color: var(--ink);
     font-family: var(--sans);
     font-size: 17px;
@@ -49,26 +76,28 @@
   }
 
   .label {
-    font-family: var(--mono);
-    font-size: 11px;
+    font-family: var(--serif);
+    font-size: 13px;
     font-weight: 500;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
+    font-variant: small-caps;
     color: var(--ink-soft);
+    font-feature-settings: "smcp" 1, "c2sc" 1;
   }
 
   .label-ink { color: var(--ink); }
-  .label-green { color: var(--green); }
+  .label-green { color: var(--saffron); }
 
   /* ─── NAV ───────────────────────────────────────────── */
   nav {
     border-bottom: 1px solid var(--hairline);
-    background: var(--bone);
+    background: var(--bg);
     position: sticky;
     top: 0;
     z-index: 50;
     backdrop-filter: blur(8px);
-    background: rgba(236, 234, 221, 0.92);
+    background: rgba(235, 232, 222, 0.92);
   }
 
   nav .wrap {
@@ -80,34 +109,50 @@
   }
 
   .logo {
-    font-family: var(--serif);
-    font-size: 22px;
-    letter-spacing: -0.01em;
     color: var(--ink);
     text-decoration: none;
     display: flex;
-    align-items: baseline;
-    gap: 10px;
+    align-items: center;
+    gap: 14px;
+    line-height: 1;
   }
-  .logo-mark {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    background: var(--green);
-    border-radius: 50%;
+  .monogram {
+    display: inline-flex;
+    align-items: baseline;
+    font-family: var(--serif);
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.025em;
+  }
+  .monogram .mono-c { font-size: 36px; }
+  .monogram .mono-k {
+    font-size: 21px;
+    margin-left: 0;
+    transform: translateY(7px);
+  }
+  .logo-word {
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 400;
+    letter-spacing: -0.005em;
+    color: var(--ink);
   }
 
   nav ul {
     list-style: none;
     display: flex;
-    gap: 36px;
+    gap: 32px;
     align-items: center;
   }
   nav a {
-    font-family: var(--mono);
-    font-size: 11px;
+    font-family: var(--serif);
+    font-size: 13px;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.16em;
+    font-variant: small-caps;
+    font-feature-settings: "smcp" 1, "c2sc" 1;
     text-decoration: none;
     color: var(--ink);
     transition: opacity 0.15s;
@@ -115,12 +160,11 @@
   nav a:hover { opacity: 0.6; }
 
   .nav-cta {
-    font-family: var(--mono) !important;
-    font-size: 11px !important;
     background: var(--ink);
-    color: var(--bone) !important;
-    padding: 10px 16px;
-    border-radius: 100px;
+    color: var(--bg) !important;
+    padding: 10px 18px 8px;
+    border-radius: 2px;
+    letter-spacing: 0.14em !important;
   }
 
   /* ─── HERO ──────────────────────────────────────────── */
@@ -137,7 +181,7 @@
   }
   .hero-meta .dot {
     width: 6px; height: 6px;
-    background: var(--green);
+    background: var(--ink);
     border-radius: 50%;
   }
 
@@ -153,7 +197,7 @@
   }
 
   h1.hero-headline em {
-    color: var(--green);
+    color: var(--ink);
     font-style: italic;
   }
 
@@ -177,7 +221,7 @@
   }
 
   .btn {
-    font-family: var(--mono);
+    font-family: var(--serif);
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.1em;
@@ -194,16 +238,16 @@
 
   .btn-primary {
     background: var(--ink);
-    color: var(--bone);
+    color: var(--bg);
   }
-  .btn-primary:hover { background: var(--green); }
+  .btn-primary:hover { background: var(--ink); }
 
   .btn-secondary {
     background: transparent;
     color: var(--ink);
     border-color: var(--hairline-strong);
   }
-  .btn-secondary:hover { background: var(--bone-deep); }
+  .btn-secondary:hover { background: var(--bg-deep); }
 
   .btn .arrow {
     transition: transform 0.18s ease;
@@ -273,10 +317,10 @@
     color: var(--ink);
     margin-bottom: 16px;
   }
-  .stat-num.green { color: var(--green); }
+  .stat-num.green { color: var(--ink); }
 
   .stat-label {
-    font-family: var(--mono);
+    font-family: var(--serif);
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.12em;
@@ -306,9 +350,9 @@
   }
   .doctrine h2 em {
     font-style: italic;
-    color: var(--green);
+    color: var(--ink);
   }
-  .doctrine .col-dont h2 em { color: var(--burgundy); }
+  .doctrine .col-dont h2 em { color: var(--ink-soft); }
 
   .doctrine ul {
     list-style: none;
@@ -324,7 +368,7 @@
     align-items: baseline;
   }
   .doctrine li .num {
-    font-family: var(--mono);
+    font-family: var(--serif);
     font-size: 11px;
     color: var(--ink-soft);
     min-width: 32px;
@@ -335,7 +379,7 @@
   .journey {
     padding: clamp(80px, 12vh, 140px) 0;
     border-bottom: 1px solid var(--hairline);
-    background: var(--bone-soft);
+    background: var(--bg-soft);
   }
 
   .section-head {
@@ -354,7 +398,7 @@
     letter-spacing: -0.025em;
     max-width: 14ch;
   }
-  .section-head h2 em { font-style: italic; color: var(--green); }
+  .section-head h2 em { font-style: italic; color: var(--ink); }
 
   .section-head p {
     font-size: 17px;
@@ -378,10 +422,10 @@
   .step:last-child { border-right: none; }
 
   .step-num {
-    font-family: var(--mono);
+    font-family: var(--serif);
     font-size: 11px;
     letter-spacing: 0.12em;
-    color: var(--green);
+    color: var(--ink);
     margin-bottom: 28px;
   }
 
@@ -421,10 +465,10 @@
     text-decoration: none;
     color: var(--ink);
   }
-  .program:hover { background: var(--bone-soft); padding-left: 12px; padding-right: 12px; }
+  .program:hover { background: var(--bg-soft); padding-left: 12px; padding-right: 12px; }
 
   .program-num {
-    font-family: var(--mono);
+    font-family: var(--serif);
     font-size: 11px;
     letter-spacing: 0.12em;
     color: var(--ink-soft);
@@ -437,7 +481,7 @@
     line-height: 1;
     letter-spacing: -0.015em;
   }
-  .program-name em { font-style: italic; color: var(--green); }
+  .program-name em { font-style: italic; color: var(--ink); }
 
   .program-desc {
     font-size: 17px;
@@ -448,7 +492,7 @@
   .program-desc .meta {
     display: block;
     margin-top: 10px;
-    font-family: var(--mono);
+    font-family: var(--serif);
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -458,7 +502,7 @@
   .program-cta {
     padding-top: 14px;
     text-align: right;
-    font-family: var(--mono);
+    font-family: var(--serif);
     font-size: 11px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -469,7 +513,7 @@
   .donate {
     padding: clamp(100px, 16vh, 200px) 0;
     background: var(--ink);
-    color: var(--bone);
+    color: var(--bg);
     border-bottom: 1px solid var(--hairline);
   }
 
@@ -486,12 +530,12 @@
     font-size: clamp(48px, 6vw, 96px);
     line-height: 0.96;
     letter-spacing: -0.025em;
-    color: var(--bone);
+    color: var(--bg);
     max-width: 14ch;
   }
   .donate h2 em {
     font-style: italic;
-    color: var(--sand);
+    color: var(--saffron);
   }
 
   .donate-side {
@@ -503,18 +547,18 @@
   .donate p {
     font-size: 18px;
     line-height: 1.5;
-    color: var(--bone-deep);
+    color: var(--bg-deep);
     max-width: 42ch;
   }
 
   .donate .btn-primary {
-    background: var(--bone);
+    background: var(--bg);
     color: var(--ink);
     align-self: flex-start;
   }
-  .donate .btn-primary:hover { background: var(--sand); }
+  .donate .btn-primary:hover { background: var(--saffron); }
 
-  .donate .label { color: var(--sand); }
+  .donate .label { color: var(--saffron); }
 
   /* ─── TRUST ─────────────────────────────────────────── */
   .trust {
@@ -544,7 +588,7 @@
   /* ─── FOOTER ────────────────────────────────────────── */
   footer {
     padding: 80px 0 60px;
-    background: var(--bone);
+    background: var(--bg);
   }
 
   .footer-grid {
@@ -569,7 +613,7 @@
   }
 
   .footer-col h4 {
-    font-family: var(--mono);
+    font-family: var(--serif);
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.12em;
@@ -593,7 +637,7 @@
     align-items: center;
     padding-top: 32px;
     border-top: 1px solid var(--hairline);
-    font-family: var(--mono);
+    font-family: var(--serif);
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.12em;
@@ -627,9 +671,9 @@
 
 <nav>
   <div class="wrap">
-    <a href="#" class="logo">
-      <span class="logo-mark"></span>
-      Collective Kindness
+    <a href="#" class="logo" aria-label="Collective Kindness">
+      <span class="monogram" aria-hidden="true"><span class="mono-c">C</span><span class="mono-k">K</span></span>
+      <span class="logo-word">Collective Kindness</span>
     </a>
     <ul>
       <li><a href="#programs">Programs</a></li>
@@ -712,7 +756,7 @@
         </ul>
       </div>
       <div class="col-dont">
-        <span class="label" style="color: var(--burgundy);">— What we don't</span>
+        <span class="label" style="color: var(--ink-soft);">— What we don't</span>
         <h2>And what <em>we won't.</em></h2>
         <ul>
           <li><span class="num">01</span>One-time financial handouts</li>
@@ -867,7 +911,7 @@
   <div class="wrap">
     <div class="footer-grid">
       <div class="footer-brand">
-        <h3>Collective <em style="font-style:italic; color:var(--green);">Kindness</em></h3>
+        <h3>Collective <em style="font-style:italic; color:var(--ink);">Kindness</em></h3>
         <p>A national 501(c)(3) helping Jewish families achieve long-term emotional and financial stability — with respect and dignity.</p>
       </div>
       <div class="footer-col">
