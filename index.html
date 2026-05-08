@@ -240,6 +240,9 @@
     width: 100%;
     height: auto;
     display: block;
+    /* mix-blend-multiply gracefully handles cream-bg images blending into our parchment */
+    mix-blend-mode: multiply;
+    filter: drop-shadow(0 8px 18px rgba(49, 58, 68, 0.08));
   }
   /* placeholder styling — visible while real assets are missing */
   .hero-object--placeholder {
@@ -887,7 +890,7 @@
   <!-- HERO OBJECTS — replace inner div with <img src="..." alt=""> once real renders arrive -->
   <div class="hero-object hero-object--envelope hero-object--placeholder">Overdue<br>envelope</div>
   <div class="hero-object hero-object--statement hero-object--placeholder">Folded credit card<br>statement</div>
-  <div class="hero-object hero-object--chip hero-object--placeholder">Poker chip</div>
+  <div class="hero-object hero-object--chip"><img src="images/poker-chip.png" alt=""></div>
   <div class="hero-object hero-object--dice hero-object--placeholder">Dice</div>
 
   <div class="wrap">
