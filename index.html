@@ -6,7 +6,7 @@
 <title>Collective Kindness — Helping People Help Themselves</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+Display:ital,opsz,wght@0,10..72,400;0,10..72,500;0,10..72,600;1,10..72,400;1,10..72,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400..600;1,400&family=Noto+Serif:ital,wdth,wght@0,62.5..100,400..600;1,62.5..100,400..500&family=Noto+Serif+Display:ital,opsz,wght@0,10..72,400..600;1,10..72,400..500&display=swap" rel="stylesheet">
 <style>
   :root {
     /* ── Primary trio (the brand) ─────────────────────── */
@@ -49,9 +49,9 @@
     --hairline-strong:  rgba(49, 58, 68, 0.32);
 
     /* ── Type (Gates-matched: Noto family) ────────────── */
-    --serif: 'Noto Serif Display', 'Noto Serif', 'Times New Roman', serif;
-    --serif-text: 'Noto Serif', 'Times New Roman', serif;
-    --sans:  'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --serif:         'Noto Serif', 'Times New Roman', serif;        /* variable, has wdth axis 62.5–100 */
+    --serif-display: 'Noto Serif Display', 'Noto Serif', serif;     /* refined large-size cuts */
+    --sans:          'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 
     --max: 1240px;
     --gutter: clamp(20px, 4vw, 56px);
@@ -81,11 +81,8 @@
     font-family: var(--serif);
     font-size: 13px;
     font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    font-variant: small-caps;
+    letter-spacing: 0;
     color: var(--ink-soft);
-    font-feature-settings: "smcp" 1, "c2sc" 1;
   }
 
   .label-ink { color: var(--ink); }
@@ -151,10 +148,7 @@
     font-family: var(--serif);
     font-size: 13px;
     font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    font-variant: small-caps;
-    font-feature-settings: "smcp" 1, "c2sc" 1;
+    letter-spacing: 0;
     text-decoration: none;
     color: var(--ink);
     transition: opacity 0.15s;
@@ -166,7 +160,7 @@
     color: var(--bg) !important;
     padding: 10px 18px 8px;
     border-radius: 2px;
-    letter-spacing: 0.14em !important;
+    letter-spacing: 0 !important;
   }
 
   /* ─── HERO ──────────────────────────────────────────── */
@@ -223,11 +217,12 @@
   }
 
   .mission-statement {
-    font-family: var(--serif);
+    font-family: var(--serif);            /* Noto Serif — variable, condensed-capable */
+    font-stretch: 75%;                    /* Noto Serif Condensed effect */
     font-weight: 400;
-    font-size: clamp(40px, 6.4vw, 100px);
-    line-height: 1.06;
-    letter-spacing: -0.022em;
+    font-size: clamp(36px, 4.8vw, 68px);
+    line-height: 1.12;
+    letter-spacing: -0.015em;
     color: var(--ink);
   }
 
@@ -254,8 +249,7 @@
     font-family: var(--serif);
     font-size: 12px;
     font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    letter-spacing: 0;
     text-decoration: none;
     padding: 18px 28px;
     border-radius: 100px;
@@ -352,8 +346,7 @@
   .stat-label {
     font-family: var(--serif);
     font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0;
     color: var(--ink-soft);
     line-height: 1.5;
   }
@@ -402,7 +395,7 @@
     font-size: 11px;
     color: var(--ink-soft);
     min-width: 32px;
-    letter-spacing: 0.05em;
+    letter-spacing: 0;
   }
 
   /* ─── JOURNEY ───────────────────────────────────────── */
@@ -454,7 +447,7 @@
   .step-num {
     font-family: var(--serif);
     font-size: 11px;
-    letter-spacing: 0.12em;
+    letter-spacing: 0;
     color: var(--ink);
     margin-bottom: 28px;
   }
@@ -500,7 +493,7 @@
   .program-num {
     font-family: var(--serif);
     font-size: 11px;
-    letter-spacing: 0.12em;
+    letter-spacing: 0;
     color: var(--ink-soft);
     padding-top: 14px;
   }
@@ -524,8 +517,7 @@
     margin-top: 10px;
     font-family: var(--serif);
     font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0;
     color: var(--ink-soft);
   }
 
@@ -534,8 +526,7 @@
     text-align: right;
     font-family: var(--serif);
     font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    letter-spacing: 0;
     color: var(--ink);
   }
 
@@ -645,8 +636,7 @@
   .footer-col h4 {
     font-family: var(--serif);
     font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0;
     color: var(--ink-soft);
     margin-bottom: 20px;
     font-weight: 500;
@@ -669,8 +659,7 @@
     border-top: 1px solid var(--hairline);
     font-family: var(--serif);
     font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0;
     color: var(--ink-soft);
     flex-wrap: wrap;
     gap: 16px;
@@ -702,7 +691,6 @@
 <nav>
   <div class="wrap">
     <a href="#" class="logo" aria-label="Collective Kindness">
-      <span class="monogram" aria-hidden="true"><span class="mono-c">C</span><span class="mono-k">K</span></span>
       <span class="logo-word">Collective Kindness</span>
     </a>
     <ul>
@@ -737,9 +725,8 @@
 <section class="mission" id="mission">
   <div class="wrap">
     <div class="mission-inner">
-      <span class="label">— Our mission</span>
       <p class="mission-statement">
-        To help <em class="em-blue">any</em> Jewish person stand on their own. To <em class="em-blue">stay</em> until they don&rsquo;t need us.
+        Our mission is to help <em class="em-blue">any</em> Jewish person stand on their own. To <em class="em-blue">stay</em> until they don&rsquo;t need us.
       </p>
     </div>
   </div>
