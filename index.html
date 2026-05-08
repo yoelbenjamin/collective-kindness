@@ -201,12 +201,14 @@
   nav a:hover { opacity: 0.6; }
 
   .nav-cta {
-    background: var(--ink);
-    color: var(--bg) !important;
+    background: var(--saffron);
+    color: var(--ink) !important;
     padding: 10px 18px 8px;
-    border-radius: 2px;
+    border-radius: 100px;
     letter-spacing: 0 !important;
+    transition: filter 0.18s ease;
   }
+  .nav-cta:hover { filter: brightness(0.94); opacity: 1 !important; }
 
   /* ─── HERO ──────────────────────────────────────────── */
   .hero {
@@ -228,13 +230,72 @@
 
   h1.hero-headline {
     font-family: var(--serif);
-    font-weight: 400;
-    font-size: clamp(56px, 10vw, 144px);
-    line-height: 0.94;
-    letter-spacing: -0.025em;
+    font-stretch: 75%;
+    font-weight: 300;
+    font-size: clamp(48px, 6.4vw, 88px);
+    line-height: 1.04;
+    letter-spacing: -0.018em;
     color: var(--ink);
-    max-width: 14ch;
-    margin-bottom: 48px;
+    max-width: 18ch;
+    margin: 0 0 56px;
+  }
+
+  /* ─── HERO WIDGET (Pentagram-style program switcher) ── */
+  .hero-widget {
+    font-family: var(--serif);
+    font-stretch: 75%;
+    font-weight: 300;
+    font-size: clamp(22px, 2.4vw, 34px);
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 56px;
+    max-width: 32ch;
+  }
+  .hero-widget .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px 3px;
+    margin: 0 2px;
+    background: var(--bg-deep);
+    border-radius: 100px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: background 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+    overflow: hidden;
+    line-height: 1.1;
+    vertical-align: baseline;
+    transform: translateY(2px);
+  }
+  .hero-widget .pill:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .hero-widget .pill .pill-text {
+    display: inline-block;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .hero-widget .pill .pill-text.is-leaving {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  .hero-widget .pill .pill-text.is-entering {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  .hero-widget .pill .pill-chevron {
+    font-size: 0.6em;
+    opacity: 0.45;
+    transform: translateY(-1px);
+  }
+
+  .hero-trust {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ink-soft);
+    letter-spacing: 0.01em;
   }
 
   h1.hero-headline em,
@@ -618,11 +679,11 @@
   }
 
   .donate .btn-primary {
-    background: var(--bg);
+    background: var(--saffron);
     color: var(--ink);
     align-self: flex-start;
   }
-  .donate .btn-primary:hover { background: var(--saffron); }
+  .donate .btn-primary:hover { filter: brightness(0.94); }
 
   .donate .label { color: var(--bg-deep); }
 
@@ -750,20 +811,11 @@
 
 <header class="hero">
   <div class="wrap">
-    <div class="hero-meta">
-      <span class="dot"></span>
-      <span class="label label-ink">Est. 2023</span>
-      <span class="label">501(c)(3) — EIN 93-2213288</span>
-    </div>
-    <h1 class="hero-headline">Helping people <em>help themselves.</em></h1>
-    <p class="hero-sub">
-      We help Jewish families from all backgrounds get back on their feet — assisting them in achieving long-term emotional and financial stability.
-      <span class="pull"> A hand-up, not a handout.</span>
+    <h1 class="hero-headline scroll-focus">We exist to help people <em class="em-blue">help themselves</em>.</h1>
+    <p class="hero-widget" aria-label="Programs and audiences">
+      We help <a class="pill" data-pill="audience" href="#"><span class="pill-text">Jewish families</span><span class="pill-chevron">▾</span></a> with <a class="pill" data-pill="issue" href="#"><span class="pill-text">debt</span><span class="pill-chevron">▾</span></a>.
     </p>
-    <div class="cta-row">
-      <a href="#apply" class="btn btn-primary">Apply for assistance <span class="arrow">→</span></a>
-      <a href="#donate" class="btn btn-secondary">Make a donation</a>
-    </div>
+    <p class="hero-trust">Founded 2023 &middot; 501(c)(3)</p>
   </div>
 </header>
 
@@ -1106,6 +1158,62 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
     update();
+  })();
+
+  // Hero widget: Pentagram-style rotating program/audience switcher.
+  // Cycles through audience+issue pairs, each pill linking to a program page.
+  (function() {
+    const widget = document.querySelector('.hero-widget');
+    if (!widget) return;
+
+    const combos = [
+      { audience: 'Jewish families',   issue: 'debt',                   href: '#kosher-debt-help' },
+      { audience: 'individuals',       issue: 'gambling addiction',     href: '#the-right-bet'    },
+      { audience: 'Shluchim',          issue: 'financial pressure',     href: '#shluchim-thrive'  },
+      { audience: 'anyone in crisis',  issue: 'coaching & care',        href: '#apply'            },
+    ];
+
+    const audienceLink = widget.querySelector('[data-pill="audience"]');
+    const issueLink    = widget.querySelector('[data-pill="issue"]');
+    const audienceText = audienceLink.querySelector('.pill-text');
+    const issueText    = issueLink.querySelector('.pill-text');
+
+    let i = 0;
+    let paused = false;
+
+    function swap(textEl, newText) {
+      textEl.classList.add('is-leaving');
+      setTimeout(() => {
+        textEl.textContent = newText;
+        textEl.classList.remove('is-leaving');
+        textEl.classList.add('is-entering');
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => textEl.classList.remove('is-entering'));
+        });
+      }, 250);
+    }
+
+    function update(idx) {
+      const combo = combos[idx];
+      swap(audienceText, combo.audience);
+      swap(issueText, combo.issue);
+      audienceLink.setAttribute('href', combo.href);
+      issueLink.setAttribute('href', combo.href);
+    }
+
+    function tick() {
+      if (paused) return;
+      i = (i + 1) % combos.length;
+      update(i);
+    }
+
+    let timer = setInterval(tick, 3500);
+
+    // Pause cycling on hover so visitors can read/click
+    [audienceLink, issueLink].forEach(el => {
+      el.addEventListener('mouseenter', () => { paused = true; });
+      el.addEventListener('mouseleave', () => { paused = false; });
+    });
   })();
 </script>
 </body>
