@@ -279,8 +279,8 @@
 
   /* RIGHT side — poker chip + dice clustered, shifted leftward (z-index 1) */
   .hero-object--chip {
-    width: 130px;
-    height: 130px;
+    width: 110px;
+    height: 110px;
     bottom: 28%;
     right: 22%;
     z-index: 1;
@@ -341,16 +341,15 @@
     text-decoration: none;
     color: var(--ink);
     cursor: pointer;
-    transition: opacity 0.2s ease;
     display: inline-block;
     text-align: center;
     vertical-align: baseline;
+    /* min-width is set dynamically by JS to match incoming content width;
+       transition makes surrounding "We help" / "with" / "." slide smoothly
+       instead of jumping when pill content changes. */
+    transition: min-width 0.42s cubic-bezier(0.32, 0.72, 0, 1),
+                opacity 0.2s ease;
   }
-  /* Fixed min-widths sized to the longest possible content per slot —
-     stops the surrounding "We help" / "with" / "." text from jumping
-     when pill content changes. */
-  .hero-widget .pill[data-pill="audience"] { min-width: 13ch; }
-  .hero-widget .pill[data-pill="issue"]    { min-width: 14ch; }
   .hero-widget .pill:hover { opacity: 0.55; }
   .hero-widget .pill .pill-text {
     display: inline-block;
@@ -895,7 +894,7 @@
   <!-- HERO OBJECTS — replace inner div with <img src="..." alt=""> once real renders arrive -->
   <div class="hero-object hero-object--envelope hero-object--placeholder">Overdue<br>envelope</div>
   <div class="hero-object hero-object--statement hero-object--placeholder">Folded credit card<br>statement</div>
-  <div class="hero-object hero-object--chip"><img src="images/poker-chip-removebg-preview.png" alt=""></div>
+  <div class="hero-object hero-object--chip"><img src="images/poker-chip-removebg-preview%20(1).png" alt=""></div>
   <div class="hero-object hero-object--dice"><img src="images/dice-removebg-preview%20(1).png" alt=""></div>
 
   <div class="wrap">
@@ -1264,21 +1263,48 @@
     const audienceText = audienceLink.querySelector('.pill-text');
     const issueText    = issueLink.querySelector('.pill-text');
 
+    // Initialize each pill's min-width to its current content's natural width
+    // so the very first rotation has a known starting value to animate from.
+    [audienceLink, issueLink].forEach(pill => {
+      const text = pill.querySelector('.pill-text');
+      pill.style.minWidth = text.offsetWidth + 'px';
+    });
+
     let i = 0;
     let paused = false;
 
+    // Measure the rendered width of a candidate text using a hidden clone of
+    // the actual text element — picks up font, font-stretch, weight, etc.
+    function measureWidth(text, sampleEl) {
+      const clone = sampleEl.cloneNode(false);
+      clone.textContent = text;
+      clone.style.position = 'absolute';
+      clone.style.visibility = 'hidden';
+      clone.style.whiteSpace = 'nowrap';
+      sampleEl.parentNode.appendChild(clone);
+      const w = clone.offsetWidth;
+      clone.remove();
+      return w;
+    }
+
     function swap(textEl, newText) {
+      const pillEl = textEl.closest('.pill');
+      const newWidth = measureWidth(newText, textEl);
+
+      // Trigger pill width transition NOW (during the leave phase) so the
+      // surrounding "We help" / "with" / "." text slides smoothly instead
+      // of snapping when the new text arrives.
+      pillEl.style.minWidth = newWidth + 'px';
+
       textEl.classList.add('is-leaving');
       setTimeout(() => {
         textEl.classList.remove('is-leaving');
         textEl.classList.add('is-entering');
         textEl.textContent = newText;
-        // Double rAF: let the browser apply is-entering (with transition: none)
-        // before removing it, so the entering animation runs from below → resting.
         requestAnimationFrame(() => {
           requestAnimationFrame(() => textEl.classList.remove('is-entering'));
         });
-      }, 220);                                  /* matches CSS opacity duration */
+      }, 220);
     }
 
     function update(idx) {
