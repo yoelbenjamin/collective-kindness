@@ -59,7 +59,7 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; overflow-x: clip; }
 
   /* ─── SCROLL-FOCUS (blur + fade-in once on viewport entry) ─ */
   .scroll-focus {
@@ -88,11 +88,11 @@
   .scroll-darken .word.is-active {
     opacity: 1;
   }
-  /* em-blue stays fully visible at brand emphasis throughout */
+  /* em-blue follows the same word-by-word opacity reveal as surrounding
+     text — the blue color stays, but it fades in with the rest. */
   .scroll-darken .em-blue,
   .scroll-darken .em-blue .word {
     color: var(--emphasis);
-    opacity: 1;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -198,6 +198,8 @@
     gap: 32px;
     align-items: center;
   }
+  /* Bring "Reach out" snug to "Donate" — they're a paired CTA cluster */
+  nav ul li:has(.nav-soft) + li:has(.nav-cta) { margin-left: -22px; }
   nav a {
     font-family: var(--serif);
     font-size: 13px;
@@ -219,6 +221,34 @@
     flex-shrink: 0;
   }
 
+  .nav-soft {
+    color: var(--ink) !important;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--ink);
+    border-radius: 4px;
+    padding: 7px 16px 9px;
+    line-height: 1;
+    background: transparent;
+    transition: background 0.18s ease, color 0.18s ease;
+  }
+  .nav-soft:hover {
+    background: var(--ink);
+    color: var(--bg) !important;
+    opacity: 1 !important;
+  }
+  /* Shared arrow micro-interaction across every CTA on the page.
+     Always visible, slides 3px to the right on hover. */
+  .reveal-arrow {
+    display: inline-block;
+    transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .nav-soft:hover .reveal-arrow,
+  .nav-cta:hover .reveal-arrow { transform: translateX(3px); }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal-arrow { transition: none; }
+  }
+
   .nav-cta {
     background: var(--saffron);
     color: var(--ink) !important;
@@ -227,6 +257,9 @@
     letter-spacing: 0 !important;
     transition: filter 0.18s ease;
     line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
   }
   .nav-cta:hover { filter: brightness(0.94); opacity: 1 !important; }
 
@@ -338,7 +371,7 @@
     font-family: var(--serif);
     font-stretch: 75%;
     font-weight: 300;
-    font-size: clamp(48px, 6.4vw, 88px);
+    font-size: clamp(56px, 6.4vw, 88px);
     line-height: 1.04;
     letter-spacing: -0.018em;
     color: var(--ink);
@@ -351,7 +384,7 @@
     font-family: var(--serif);
     font-stretch: 75%;
     font-weight: 300;
-    font-size: clamp(22px, 2.4vw, 34px);
+    font-size: clamp(17px, 2.4vw, 34px);
     line-height: 1.5;
     color: var(--ink);
     margin: 0;                         /* let inline content center within centered .wrap */
@@ -479,7 +512,7 @@
     font-family: var(--serif);            /* Noto Serif — variable, condensed-capable */
     font-stretch: 75%;                    /* Noto Serif Condensed effect */
     font-weight: 300;                     /* Light — matches Gates */
-    font-size: 60px;
+    font-size: clamp(34px, 6vw, 68px);
     line-height: 1.12;
     letter-spacing: -0.015em;
     color: var(--ink);
@@ -567,7 +600,7 @@
     font-family: var(--serif);            /* matches .mission-statement */
     font-stretch: 75%;
     font-weight: 300;
-    font-size: 60px;
+    font-size: clamp(34px, 6vw, 68px);
     line-height: 1.12;
     letter-spacing: -0.015em;
     color: var(--ink);
@@ -646,6 +679,13 @@
   }
   .doctrine .col-dont h2 em { color: var(--ink-soft); }
 
+  .doctrine-intro {
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 38ch;
+    margin-bottom: 8px;
+  }
   .doctrine ul {
     list-style: none;
     border-top: 1px solid var(--hairline);
@@ -659,6 +699,20 @@
     gap: 24px;
     align-items: baseline;
   }
+  .doctrine-cta {
+    display: inline-block;
+    margin-top: 32px;
+    padding: 12px 24px 14px;
+    background: var(--saffron);
+    color: var(--ink);
+    border-radius: 4px;
+    text-decoration: none;
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1;
+    transition: filter 0.18s ease;
+  }
+  .doctrine-cta:hover { filter: brightness(0.94); }
   .doctrine li .num {
     font-family: var(--serif);
     font-size: 11px;
@@ -822,7 +876,8 @@
     pointer-events: none;
     z-index: -1;
   }
-  .program:hover::before { clip-path: inset(0 0 0 0); }
+  .program:hover::before,
+  .program.is-hover::before { clip-path: inset(0 0 0 0); }
   @media (prefers-reduced-motion: reduce) {
     .program::before { transition: none; }
   }
@@ -872,16 +927,21 @@
     color: var(--ink);
     transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
   }
-  .program:hover .program-cta {
+  .program:hover .program-cta,
+  .program.is-hover .program-cta {
     background: var(--ink);
     color: var(--bg);
     border-color: var(--ink);
     transform: translateX(2px);
   }
-  .program-list .program:nth-child(1):hover .program-cta { background: #161E54; border-color: #161E54; } /* Kosher Debt Help */
-  .program-list .program:nth-child(2):hover .program-cta { background: #3F3614; border-color: #3F3614; } /* Shluchim Thrive */
-  .program-list .program:nth-child(3):hover .program-cta { background: #2E464A; border-color: #2E464A; } /* The Right Bet */
-  .program-list .program:nth-child(4):hover .program-cta { background: #562A11; border-color: #562A11; } /* Local Chapters */
+  .program-list .program:nth-child(1):hover .program-cta,
+  .program-list .program:nth-child(1).is-hover .program-cta { background: #161E54; border-color: #161E54; } /* Kosher Debt Help */
+  .program-list .program:nth-child(2):hover .program-cta,
+  .program-list .program:nth-child(2).is-hover .program-cta { background: #3F3614; border-color: #3F3614; } /* Shluchim Thrive */
+  .program-list .program:nth-child(3):hover .program-cta,
+  .program-list .program:nth-child(3).is-hover .program-cta { background: #2E464A; border-color: #2E464A; } /* The Right Bet */
+  .program-list .program:nth-child(4):hover .program-cta,
+  .program-list .program:nth-child(4).is-hover .program-cta { background: #562A11; border-color: #562A11; } /* Local Chapters */
 
   /* ─── DONATE CTA ────────────────────────────────────── */
   .donate {
@@ -900,12 +960,13 @@
 
   .donate h2 {
     font-family: var(--serif);
-    font-weight: 400;
-    font-size: clamp(48px, 6vw, 96px);
-    line-height: 0.96;
-    letter-spacing: -0.025em;
+    font-stretch: 75%;
+    font-weight: 300;
+    font-size: clamp(36px, 4.4vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
     color: var(--bg);
-    max-width: 14ch;
+    max-width: 16ch;
   }
   .donate h2 em {
     font-style: italic;
@@ -1017,11 +1078,248 @@
     flex-wrap: wrap;
     gap: 16px;
   }
+  .footer-base-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .footer-seal {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+  }
+
+  /* ─── DESKTOP DROPDOWN (Pathways) ───────────────────── */
+  .nav-dropdown { position: relative; }
+  .nav-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: -12px;
+    background: var(--bg);
+    border: 1px solid var(--hairline);
+    border-radius: 6px;
+    padding: 6px 0;
+    min-width: 190px;
+    box-shadow: 0 12px 32px rgba(20, 24, 30, 0.08);
+    opacity: 0;
+    transform: scale(0.97) translateY(-4px);
+    transform-origin: top left;
+    pointer-events: none;
+    transition: opacity 180ms cubic-bezier(0.23, 1, 0.32, 1),
+                transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
+    z-index: 50;
+  }
+  /* Invisible bridge over the visual gap so the cursor can travel from
+     trigger to dropdown without losing :hover. Active only while the
+     menu is interactive. */
+  .nav-dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    height: 10px;
+  }
+  .nav-dropdown:hover .nav-dropdown-menu,
+  .nav-dropdown:focus-within .nav-dropdown-menu {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    pointer-events: auto;
+  }
+  .nav-dropdown-menu a {
+    display: block;
+    padding: 8px 18px;
+    color: var(--ink);
+    font-size: 14px;
+    text-decoration: none;
+    transition: opacity 120ms ease;
+  }
+  .nav-dropdown-menu a:hover { opacity: 0.55; }
+  @media (prefers-reduced-motion: reduce) {
+    .nav-dropdown-menu { transition: none; }
+  }
+
+  /* ─── MOBILE DRAWER ─────────────────────────────────── */
+  .hamburger {
+    display: none;                /* shown via media query */
+    background: none;
+    border: none;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .hamburger:active { transform: scale(0.94); }
+  .hamburger span {
+    position: absolute;
+    left: 9px;
+    right: 9px;
+    height: 1.5px;
+    background: var(--ink);
+    border-radius: 2px;
+    transition: top 220ms cubic-bezier(0.32, 0.72, 0, 1),
+                transform 220ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .hamburger span:nth-child(1) { top: 16px; }
+  .hamburger span:nth-child(2) { top: 23px; }
+  .hamburger[aria-expanded="true"] span:nth-child(1) { top: 19px; transform: rotate(45deg); }
+  .hamburger[aria-expanded="true"] span:nth-child(2) { top: 19px; transform: rotate(-45deg); }
+
+  .drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 24, 30, 0.42);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 320ms cubic-bezier(0.32, 0.72, 0, 1);
+    z-index: 99;
+    backdrop-filter: blur(2px);
+  }
+  .drawer-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+  .drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;                 /* fallback */
+    height: 100dvh;                /* tracks mobile browser chrome */
+    width: min(360px, 86vw);
+    background: var(--bg);
+    z-index: 100;
+    transform: translateX(100%);
+    transition: transform 380ms cubic-bezier(0.32, 0.72, 0, 1);
+    padding: 72px 32px max(48px, calc(env(safe-area-inset-bottom) + 32px));
+    display: flex;
+    flex-direction: column;
+    box-shadow: -24px 0 60px rgba(20, 24, 30, 0.10);
+    overflow-y: auto;
+    overscroll-behavior: contain;  /* don't bubble scroll to body */
+  }
+  .drawer.is-open { transform: translateX(0); }
+
+  .drawer-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .drawer-close:active { transform: scale(0.94); }
+
+  .drawer-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+  }
+  .drawer-list li { border-bottom: 1px solid var(--hairline); }
+  .drawer-list li:first-child { border-top: 1px solid var(--hairline); }
+  .drawer-list > li > a,
+  .drawer-list > li > .drawer-toggle {
+    display: block;
+    width: 100%;
+    padding: 18px 0;
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--ink);
+    text-decoration: none;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateX(24px);
+    transition: opacity 380ms cubic-bezier(0.32, 0.72, 0, 1),
+                transform 380ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .drawer-list > li > .drawer-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .drawer.is-open .drawer-list > li > a,
+  .drawer.is-open .drawer-list > li > .drawer-toggle {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .drawer.is-open .drawer-list > li:nth-child(1) > * { transition-delay: 80ms; }
+  .drawer.is-open .drawer-list > li:nth-child(2) > * { transition-delay: 140ms; }
+  .drawer.is-open .drawer-list > li:nth-child(3) > * { transition-delay: 200ms; }
+  .drawer.is-open .drawer-list > li:nth-child(4) > * { transition-delay: 260ms; }
+  .drawer.is-open .drawer-list > li:nth-child(5) > * { transition-delay: 320ms; }
+
+  .drawer-chev {
+    transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1);
+    flex-shrink: 0;
+    color: var(--ink-soft);
+  }
+  .drawer-toggle[aria-expanded="true"] .drawer-chev { transform: rotate(90deg); }
+
+  .drawer-sublist {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 18px;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 340ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .drawer-toggle[aria-expanded="true"] + .drawer-sublist { max-height: 320px; }
+  .drawer-sublist li { border-top: 1px solid var(--hairline); }
+  .drawer-sublist a {
+    display: block;
+    padding: 12px 0;
+    font-family: var(--serif);
+    font-size: 17px;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .drawer-donate {
+    background: var(--saffron);
+    color: var(--ink);
+    text-decoration: none;
+    text-align: center;
+    padding: 16px 24px;
+    border-radius: 4px;
+    font-family: var(--sans);
+    font-size: 15px;
+    margin-top: 24px;
+    opacity: 0;
+    transform: translateX(24px);
+    transition: opacity 380ms cubic-bezier(0.32, 0.72, 0, 1),
+                transform 380ms cubic-bezier(0.32, 0.72, 0, 1),
+                filter 0.18s ease;
+  }
+  .drawer.is-open .drawer-donate { opacity: 1; transform: translateX(0); transition-delay: 320ms; }
+  .drawer-donate:hover { filter: brightness(0.94); }
+
+  body.drawer-open { overflow: hidden; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hamburger span,
+    .drawer,
+    .drawer-backdrop,
+    .drawer-list a,
+    .drawer-donate { transition: none; }
+  }
 
   /* ─── RESPONSIVE ────────────────────────────────────── */
   @media (max-width: 900px) {
-    nav ul { gap: 20px; }
-    nav ul li:not(:last-child) { display: none; }
+    nav ul { display: none; }                  /* desktop nav hidden */
+    .hamburger { display: block; }             /* hamburger shown */
     .stat-grid { grid-template-columns: repeat(2, 1fr); }
     .stat:nth-child(2) { border-right: none; }
     .stat:nth-child(1), .stat:nth-child(2) { border-bottom: 1px solid var(--hairline); }
@@ -1032,10 +1330,30 @@
     .program { grid-template-columns: 1fr; gap: 16px; padding: 28px 0; }
     .program-desc { padding-top: 0; }
     .program-cta { justify-self: start; margin-top: 0; }
+    /* On mobile the row-color-wash bleeding past gutters looks misaligned;
+       contain it to the row */
+    .program::before { inset: 0; }
     .donate-inner { grid-template-columns: 1fr; gap: 40px; }
     .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
     .footer-brand { grid-column: span 2; }
     .footer-base { flex-direction: column; align-items: flex-start; }
+    /* Olive branch: at narrow widths the wide SVG is mostly clipped below
+       the hero. Pull it up so it stays visible. */
+    .hero-olive { bottom: -40px; left: -40px; right: -20px; width: calc(100% + 60px); opacity: 0.10; }
+    /* Mission section gets more breathing room on mobile */
+    .mission { padding: clamp(70px, 14vh, 140px) 0; }
+    /* Tighten partner marquee */
+    .partners-track img { height: 26px; }
+    .partners-track { gap: 40px; }
+    /* Cap the slot widget rows so very long combos don't blow out */
+    .slot-row { max-width: 80vw; }
+  }
+  /* Tighter still for phones */
+  @media (max-width: 480px) {
+    .hero { padding: clamp(60px, 10vh, 120px) 0 clamp(40px, 8vh, 100px); }
+    .hero-olive { bottom: -30px; opacity: 0.09; }
+    .mission-cta { padding: 11px 20px 13px; font-size: 14px; }
+    .program-cta { padding: 9px 16px 11px; font-size: 12px; }
   }
 </style>
 </head>
@@ -1048,14 +1366,57 @@
       <span class="logo-word">Collective Kindness</span>
     </a>
     <ul>
-      <li><a href="#programs" class="has-chevron">Pathways<svg width="9" height="5" viewBox="0 0 9 5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><polyline points="1,1 4.5,4 8,1"/></svg></a></li>
+      <li class="nav-dropdown">
+        <a href="#programs" class="has-chevron">Pathways<svg width="9" height="5" viewBox="0 0 9 5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><polyline points="1,1 4.5,4 8,1"/></svg></a>
+        <div class="nav-dropdown-menu" role="menu">
+          <a href="#programs" role="menuitem">Kosher Debt Help</a>
+          <a href="#programs" role="menuitem">Shluchim Thrive</a>
+          <a href="#programs" role="menuitem">The Right Bet</a>
+          <a href="#programs" role="menuitem">Local Chapters</a>
+        </div>
+      </li>
       <li><a href="#how">How it works</a></li>
       <li><a href="#impact">Impact</a></li>
       <li><a href="#about">About</a></li>
-      <li><a href="#donate" class="nav-cta">Donate</a></li>
+      <li><a href="#apply" class="nav-soft">Reach out<span class="reveal-arrow" aria-hidden="true">&nbsp;→</span></a></li>
+      <li><a href="#donate" class="nav-cta">Donate<span class="reveal-arrow" aria-hidden="true">&nbsp;→</span></a></li>
     </ul>
+    <button class="hamburger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-drawer">
+      <span></span>
+      <span></span>
+    </button>
   </div>
 </nav>
+
+<div class="drawer-backdrop" aria-hidden="true"></div>
+<aside id="mobile-drawer" class="drawer" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
+  <button class="drawer-close" type="button" aria-label="Close menu">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+      <path d="M4 4 L16 16 M16 4 L4 16"/>
+    </svg>
+  </button>
+  <ul class="drawer-list">
+    <li class="drawer-expandable">
+      <button class="drawer-toggle" type="button" aria-expanded="false" aria-controls="drawer-pathways">
+        Pathways
+        <svg class="drawer-chev" width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+          <polyline points="3,2 7.5,5.5 3,9"/>
+        </svg>
+      </button>
+      <ul id="drawer-pathways" class="drawer-sublist">
+        <li><a href="#programs">Kosher Debt Help</a></li>
+        <li><a href="#programs">Shluchim Thrive</a></li>
+        <li><a href="#programs">The Right Bet</a></li>
+        <li><a href="#programs">Local Chapters</a></li>
+      </ul>
+    </li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#impact">Impact</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#apply">Reach out</a></li>
+  </ul>
+  <a href="#donate" class="drawer-donate">Donate</a>
+</aside>
 
 <header class="hero">
 
@@ -1186,6 +1547,28 @@
   </div>
 </section>
 
+<section class="doctrine">
+  <div class="wrap">
+    <div class="doctrine-grid">
+      <div class="col-do">
+        <h2>Is <em>Collective Kindness</em> right for me?</h2>
+        <p class="doctrine-intro">If you're a Jewish family or individual carrying a hard chapter — debt, divorce, a job change, a quieter struggle no one knows about — there's a good chance we can walk it with you. Here's some of what that looks like:</p>
+      </div>
+      <div class="col-do">
+        <ul>
+          <li>Mental health counselling</li>
+          <li>Financial coaching</li>
+          <li>Employment consulting</li>
+          <li>Therapy subsidies</li>
+          <li>Legal advocacy</li>
+          <li>A trusted referral network</li>
+        </ul>
+        <a href="#apply" class="doctrine-cta">Reach out for help <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="partners" aria-label="Partner organizations">
   <p class="partners-label">Our partners &amp; featured in</p>
   <div class="partners-track">
@@ -1260,37 +1643,6 @@
   </div>
 </section>
 
-<section class="doctrine">
-  <div class="wrap">
-    <div class="doctrine-grid">
-      <div class="col-do">
-        <span class="label label-green">What we do</span>
-        <h2>The work, <em>plainly.</em></h2>
-        <ul>
-          <li><span class="num">01</span>Mental health counselling</li>
-          <li><span class="num">02</span>Financial coaching</li>
-          <li><span class="num">03</span>Employment consulting</li>
-          <li><span class="num">04</span>Therapy subsidies</li>
-          <li><span class="num">05</span>Legal advocacy</li>
-          <li><span class="num">06</span>A trusted referral network</li>
-        </ul>
-      </div>
-      <div class="col-dont">
-        <span class="label" style="color: var(--ink-soft);">What we don't</span>
-        <h2>And what <em>we won't.</em></h2>
-        <ul>
-          <li><span class="num">01</span>One-time financial handouts</li>
-          <li><span class="num">02</span>Large-scale emergencies</li>
-          <li><span class="num">03</span>Death-related needs</li>
-          <li><span class="num">04</span>Primary mental health treatment</li>
-          <li><span class="num">05</span>Fundraising for celebrations</li>
-          <li><span class="num">06</span>Monthly deficits over $5,000</li>
-          <li><span class="num">07</span>Anyone unwilling to participate</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section class="journey" id="how">
   <div class="wrap">
@@ -1342,7 +1694,6 @@
   <div class="wrap">
     <div class="donate-inner">
       <div>
-        <span class="label" style="display:block; margin-bottom:32px;">Make a gift</span>
         <h2>Your gift becomes someone else's <em>foundation.</em></h2>
       </div>
       <div class="donate-side">
@@ -1360,10 +1711,10 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <h3>Collective <em style="font-style:italic; color:var(--ink);">Kindness</em></h3>
-        <p>A national 501(c)(3) helping Jewish families achieve long-term emotional and financial stability — with respect and dignity.</p>
+        <p>A national 501(c)(3) helping Jewish families achieve long-term emotional and financial stability, with respect and dignity.</p>
       </div>
       <div class="footer-col">
-        <h4>Programs</h4>
+        <h4>Pathways</h4>
         <ul>
           <li><a href="#">Kosher Debt Help</a></li>
           <li><a href="#">Shluchim Thrive</a></li>
@@ -1391,13 +1742,60 @@
       </div>
     </div>
     <div class="footer-base">
-      <span>501(c)(3) · EIN 93-2213288 · GuideStar Platinum Seal of Transparency</span>
+      <div class="footer-base-left">
+        <img src="images/logos/guidestar-platinum-seal.svg" alt="Candid Platinum Seal of Transparency" class="footer-seal" width="64" height="64">
+        <span>501(c)(3) · EIN 93-2213288 · Candid Platinum Seal of Transparency</span>
+      </div>
       <span>© 2026 Collective Kindness</span>
     </div>
   </div>
 </footer>
 
 <script>
+  // Mobile drawer: slide in from the right, backdrop fade, body scroll lock,
+  // staggered link entrance, Escape-to-close, anchor-click closes.
+  (function() {
+    const hamburger = document.querySelector('.hamburger');
+    const drawer    = document.querySelector('.drawer');
+    const backdrop  = document.querySelector('.drawer-backdrop');
+    const closeBtn  = document.querySelector('.drawer-close');
+    if (!hamburger || !drawer || !backdrop) return;
+
+    function open() {
+      drawer.classList.add('is-open');
+      backdrop.classList.add('is-open');
+      hamburger.setAttribute('aria-expanded', 'true');
+      drawer.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('drawer-open');
+    }
+    function close() {
+      drawer.classList.remove('is-open');
+      backdrop.classList.remove('is-open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      drawer.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('drawer-open');
+    }
+    function toggle() {
+      drawer.classList.contains('is-open') ? close() : open();
+    }
+
+    hamburger.addEventListener('click', toggle);
+    closeBtn && closeBtn.addEventListener('click', close);
+    backdrop.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && drawer.classList.contains('is-open')) close();
+    });
+    drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
+
+    // Expandable items inside the drawer (e.g. Pathways)
+    drawer.querySelectorAll('.drawer-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      });
+    });
+  })();
+
   // Scroll-focus: blur+fade-in once per element when it enters the viewport.
   // Mirrors the TrumpRX pattern (opacity 0 + blur 4px + translateY 12px → resting state).
   (function() {
@@ -1421,6 +1819,14 @@
   (function() {
     const programs = document.querySelectorAll('.program-list .program');
     if (!programs.length) return;
+
+    // JS-driven hover: pointerenter/leave fire even during active scroll,
+    // unlike the :hover pseudo which Chrome throttles.
+    programs.forEach(p => {
+      p.addEventListener('pointerenter', () => p.classList.add('is-hover'));
+      p.addEventListener('pointerleave', () => p.classList.remove('is-hover'));
+    });
+
     if (!('IntersectionObserver' in window)) {
       programs.forEach(p => p.classList.add('is-visible'));
       return;
@@ -1484,7 +1890,6 @@
         const progress = Math.max(0, Math.min(1, (startLine - top) / (startLine - endLine)));
         const activeCount = Math.ceil(progress * words.length);
         words.forEach((w, i) => {
-          if (w.closest('.em-blue')) return; // emphasis words keep their color
           w.classList.toggle('is-active', i < activeCount);
         });
       });
@@ -1545,11 +1950,27 @@
       });
     }
 
+    // Scale transition duration to the magnitude of change so every swap
+    // reads at a consistent visual velocity. Without this, a 1-row jump
+    // covers far less ground in the fixed 600ms than a 6-row jump, and
+    // long jumps feel "faster" than short ones.
+    let prevA = 0, prevI = 0;
+    const PER_ROW_MS = 90;
+    const BASE_MS = 280;
     function paint(audIdx, issueIdx) {
+      const audDelta = Math.abs(audIdx - prevA);
+      const issDelta = Math.abs(issueIdx - prevI);
+      const audDur = audDelta === 0 ? 0 : BASE_MS + audDelta * PER_ROW_MS;
+      const issDur = issDelta === 0 ? 0 : BASE_MS + issDelta * PER_ROW_MS;
+      tracks[0].window.style.transitionDuration = audDur + 'ms';
+      tracks[0].track.style.transitionDuration  = audDur + 'ms';
+      tracks[1].window.style.transitionDuration = issDur + 'ms';
+      tracks[1].track.style.transitionDuration  = issDur + 'ms';
       tracks[0].window.style.width = tracks[0].widths[audIdx] + 'px';
       tracks[0].track.style.transform = 'translateY(' + (-audIdx * tracks[0].rowHeight) + 'px)';
       tracks[1].window.style.width = tracks[1].widths[issueIdx] + 'px';
       tracks[1].track.style.transform = 'translateY(' + (-issueIdx * tracks[1].rowHeight) + 'px)';
+      prevA = audIdx; prevI = issueIdx;
     }
 
     // Never repeat the same change-mode twice in a row, otherwise we get
